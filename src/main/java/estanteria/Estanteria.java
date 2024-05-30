@@ -17,8 +17,8 @@ public class Estanteria {
         }
     }
 
-    public Modulo getModulo(int posicion, int modulo) {
-        return this.posiciones[posicion][modulo];
+    public Modulo getModulo(int posicion, int nivel) {
+        return this.posiciones[posicion][nivel];
     }
 
 }
