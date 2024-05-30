@@ -54,6 +54,7 @@ public abstract class Producto {
 
     public void setTalle(int talle) {
         this.talle = talle;
+
     }
 
     public abstract int calcularPrioridad(Producto producto);//metodo capaz para calcular prioridad se me ocurre o prefieren enum?
