@@ -1,24 +1,82 @@
 package estanteria;
 
-public class Estanteria {
 
-    private int id;
-    private static int contId=0;
-    private Modulo[][] posiciones;
+import enumeradores.Prioridad;
 
-    public Estanteria() {
-        contId++;
-        this.id=contId;
-        this.posiciones = new Modulo[100][3];
-        for (int i = 0; i < 100; i++) {
-            for (int j = 0; j < 3; j++) {
-                this.posiciones[i][j] = new Modulo();
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
+public abstract class Estanteria {
+    private Map<Posicion, ProductoAlmacenado> estanteria;
+    private Prioridad prioridad;
+
+    public Estanteria(Prioridad prioridad) {
+        estanteria = new HashMap<>();
+        this.prioridad = prioridad;
+    }
+
+    public abstract void crearPosicionesEnMaximos();
+
+    public Map<Posicion, ProductoAlmacenado> getEstanteria() {
+        return estanteria;
+    }
+
+    public void setEstanteria(Map<Posicion, ProductoAlmacenado> estanteria) {
+        this.estanteria = estanteria;
+    }
+
+    public Prioridad getPrioridad() {
+        return prioridad;
+    }
+
+    public void setPrioridad(Prioridad prioridad) {
+        this.prioridad = prioridad;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Estanteria that = (Estanteria) o;
+        return Objects.equals(getEstanteria(), that.getEstanteria()) && getPrioridad() == that.getPrioridad();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getEstanteria(), getPrioridad());
+    }
+
+    @Override
+    public String toString() {
+        return "Estanteria{" +
+                "estanteria=" + estanteria +
+                ", prioridad=" + prioridad +
+                '}';
+    }
+
+    /*public void agregarProducto(int posicion, Producto producto) {
+        if (posicion >= 0 && posicion < 300) {
+            Posicion p = estanteria.get(posicion);
+            if (producto.getVolumen() < p.getVolumen()) {
+                p.agregarObjeto(producto);
+            } else {
+                System.out.println("La posición " + posicion + " está llena.");
             }
+        } else {
+            System.out.println("Posición inválida.");
         }
     }
 
-    public Modulo getModulo(int posicion, int nivel) {
-        return this.posiciones[posicion][nivel];
+    public List<Producto> obtenerProductosEnPosicion(int posicion) {
+        if (posicion >= 0 && posicion < 300) {
+            estanteria.get(posicion).mostrarContenido();
+            return estanteria.get(posicion).getProductos();
+        } else {
+            System.out.println("Posición inválida.");
+            return null;
+        }
     }
 
+    */
 }
