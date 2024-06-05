@@ -12,7 +12,7 @@ public class ProductoAlmacenado {
         this.hashProducto = hashProducto;
         this.stockDePosicion = stockDePosicion;
         this.VolumenProducto = VolumenProducto;
-        this.sumatoriaVolumen = VolumenProducto*stockDePosicion;
+        this.sumatoriaVolumen = VolumenProducto * stockDePosicion;
     }
 
     public Integer getHashProducto() {
