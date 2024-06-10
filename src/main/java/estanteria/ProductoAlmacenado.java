@@ -1,26 +1,26 @@
 package estanteria;
 
+import Productos.Producto;
+
 import java.util.Objects;
 
 public class ProductoAlmacenado {
-    private Integer hashProducto;
-    private Integer stockDePosicion;//STOCK QUE ALMACENE EN UNA POSICION
-    private Float VolumenProducto;
-    private Float sumatoriaVolumen;
+    private Producto productoAlmacenado;
+    private Integer stockDePosicion;//STOCK QUE ALMACENO EN UNA POSICION
+    private Double volumenAlmacenado;
 
-    public ProductoAlmacenado(Integer hashProducto, Integer stockDePosicion, Float VolumenProducto) {
-        this.hashProducto = hashProducto;
+    public ProductoAlmacenado(Producto productoAlmacenado, Integer stockDePosicion) {
+        this.productoAlmacenado = productoAlmacenado;
         this.stockDePosicion = stockDePosicion;
-        this.VolumenProducto = VolumenProducto;
-        this.sumatoriaVolumen = VolumenProducto * stockDePosicion;
+        this.volumenAlmacenado = productoAlmacenado.getVolumen()*stockDePosicion;
     }
 
-    public Integer getHashProducto() {
-        return hashProducto;
+    public Producto getProductoAlmacenado() {
+        return productoAlmacenado;
     }
 
-    public void setHashProducto(Integer hashProducto) {
-        this.hashProducto = hashProducto;
+    public void setProductoAlmacenado(Producto productoAlmacenado) {
+        this.productoAlmacenado = productoAlmacenado;
     }
 
     public Integer getStockDePosicion() {
@@ -31,24 +31,33 @@ public class ProductoAlmacenado {
         this.stockDePosicion = stockDePosicion;
     }
 
+    public Double getVolumenAlmacenado() {
+        return volumenAlmacenado;
+    }
+
+    public void setVolumenAlmacenado(Double volumenAlmacenado) {
+        this.volumenAlmacenado = volumenAlmacenado;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ProductoAlmacenado that = (ProductoAlmacenado) o;
-        return Objects.equals(getHashProducto(), that.getHashProducto()) && Objects.equals(getStockDePosicion(), that.getStockDePosicion());
+        return Objects.equals(getProductoAlmacenado(), that.getProductoAlmacenado()) && Objects.equals(getStockDePosicion(), that.getStockDePosicion()) && Objects.equals(getVolumenAlmacenado(), that.getVolumenAlmacenado());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getHashProducto(), getStockDePosicion());
+        return Objects.hash(getProductoAlmacenado(), getStockDePosicion(), getVolumenAlmacenado());
     }
 
     @Override
     public String toString() {
         return "ProductoAlmacenado{" +
-                "hashProducto=" + hashProducto +
+                "productoAlmacenado=" + productoAlmacenado +
                 ", stockDePosicion=" + stockDePosicion +
+                ", volumenAlmacenado=" + volumenAlmacenado +
                 '}';
     }
 }
