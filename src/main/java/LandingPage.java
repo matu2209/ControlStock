@@ -47,13 +47,13 @@ public class LandingPage extends JFrame {
         setVisible(true);
     }
     private void openPickeoMenu() {
-        // Implementar la apertura del menú de Pickeo
-        JOptionPane.showMessageDialog(this, "Abrir Menú Pickeo");
+        dispose();
+        new PickeoMenu();
     }
 
     private void openItemsMenu() {
-        // Implementar la apertura del menú de Items
-        JOptionPane.showMessageDialog(this, "Abrir Menú Items");
+        dispose();
+        new ItemsMenu();
     }
 
     public static void main(String[] args) {
