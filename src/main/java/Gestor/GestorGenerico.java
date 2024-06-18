@@ -4,7 +4,7 @@ import Interfaces.Buscable;
 
 import java.util.*;
 
-public class GestorGenerico<T extends Buscable, U extends Collection<T>> { //falta parametrizar a Buscable
+public class GestorGenerico<T extends Buscable<C>, U extends Collection<T>,C> { //falta parametrizar a Buscable
     private final U elementos;
 
     public GestorGenerico(U collection) {
@@ -27,6 +27,9 @@ public class GestorGenerico<T extends Buscable, U extends Collection<T>> { //fal
         return elementos.contains(elemento);
     }
 
+    public T buscar(C elemento) {
+        return elementos.stream().filter(el -> el.equals(elemento)).findFirst().orElse(null);
+    }
     public void limpiar() {
         elementos.clear();
     }
