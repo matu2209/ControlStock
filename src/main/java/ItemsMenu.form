@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="ItemsMenu">
+  <grid id="27dc6" binding="itemsPanel" layout-manager="GridLayoutManager" row-count="5" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="20" y="20" width="500" height="400"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="674bb" class="javax.swing.JButton" binding="agregarStockButton">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Inter Semi Bold" size="14"/>
+          <text value="Agregar Stock"/>
+        </properties>
+      </component>
+      <component id="1dc7d" class="javax.swing.JButton" binding="buscarStockButton">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Detalles De Stock"/>
+        </properties>
+      </component>
+      <component id="9ed1a" class="javax.swing.JButton" binding="verDetallesButton">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Informacion Gral de Producto"/>
+        </properties>
+      </component>
+      <component id="763ae" class="javax.swing.JButton" binding="volverButton">
+        <constraints>
+          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Volver"/>
+        </properties>
+      </component>
+      <component id="98e0c" class="javax.swing.JLabel" binding="itemsMenuTitle">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <background color="-4580096"/>
+          <font name="Inter Semi Bold" size="20"/>
+          <foreground color="-1715134"/>
+          <horizontalAlignment value="0"/>
+          <horizontalTextPosition value="0"/>
+          <text value="Menu De Productos"/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>
