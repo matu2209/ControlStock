@@ -4,10 +4,10 @@ import Interfaces.Buscable;
 
 import java.util.*;
 
-public class GestorColecciones<T extends Buscable> {
-    private Collection<T> elementos;
+public class GestorGenerico<T extends Buscable, U extends Collection<T>> { //falta parametrizar a Buscable
+    private final U elementos;
 
-    public GestorColecciones(Collection<T> collection) {
+    public GestorGenerico(U collection) {
         this.elementos = collection;
     }
 
