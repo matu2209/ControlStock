@@ -16,8 +16,8 @@ public class OrdenAlmacenamiento extends Orden implements Comparable<OrdenAlmace
     private String nroRemito;
     private Empresa empresa;
 
-    public OrdenAlmacenamiento(Producto producto, Integer cantidadProducto, Posicion posicion, LocalDateTime fecha, Integer legajo, String nroRemito, Empresa empresa) {
-        super(producto, cantidadProducto, posicion, fecha, legajo);
+    public OrdenAlmacenamiento(Producto producto, Integer cantidadProducto, String nroRemito, Empresa empresa) {
+        super(producto, cantidadProducto);
         this.idOrden = autoID++;
         this.nroRemito = nroRemito;
         this.empresa = empresa;
@@ -84,11 +84,13 @@ public class OrdenAlmacenamiento extends Orden implements Comparable<OrdenAlmace
 
 
     @Override
-    public void finalizarOrden(Integer legajoRealizador){
+    public void finalizarOrden(Integer legajoRealizador, Posicion posicion){
+        this.setPosicion(posicion);
         this.setLegajo(legajoRealizador);
         this.setEstado(EstadoOrden.FINALIZADA);
         this.setFechaRealizacion(LocalDateTime.now());
     }
+
     @Override
     public void cancelarOrden(){
         this.setEstado(EstadoOrden.CANCELADA);

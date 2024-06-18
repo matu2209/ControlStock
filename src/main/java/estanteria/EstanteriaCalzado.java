@@ -30,4 +30,8 @@ public class EstanteriaCalzado extends Estanteria {
         }
     }
 
+    @Override
+    public boolean buscar(Integer parametroABuscar) {
+        return false;
+    }
 }
