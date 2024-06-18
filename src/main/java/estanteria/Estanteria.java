@@ -1,17 +1,21 @@
 package estanteria;
 
 
+import Interfaces.Buscable;
 import enumeradores.Prioridad;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public abstract class Estanteria {
-    private Map<Posicion, ProductoAlmacenado> estanteria;
+public abstract class Estanteria implements Buscable<Integer> {
+    private static Integer autoId=1;
+    private final Integer idEstanteria;
+    private final Map<Posicion, ProductoAlmacenado> estanteria;
     private Prioridad prioridad;
 
     public Estanteria(Prioridad prioridad) {
+        idEstanteria=autoId++;
         estanteria = new HashMap<>();
         this.prioridad = prioridad;
     }
@@ -22,8 +26,8 @@ public abstract class Estanteria {
         return estanteria;
     }
 
-    public void setEstanteria(Map<Posicion, ProductoAlmacenado> estanteria) {
-        this.estanteria = estanteria;
+    public Integer getIdEstanteria() {
+        return idEstanteria;
     }
 
     public Prioridad getPrioridad() {
@@ -49,7 +53,8 @@ public abstract class Estanteria {
 
     @Override
     public String toString() {
-        return "Estanteria{" +
+        return
+                "Estanteria{" + "idEstanteria=" + idEstanteria +
                 "estanteria=" + estanteria +
                 ", prioridad=" + prioridad +
                 '}';

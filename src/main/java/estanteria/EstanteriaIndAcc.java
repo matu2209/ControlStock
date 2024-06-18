@@ -32,4 +32,9 @@ public class EstanteriaIndAcc extends Estanteria {
             }
         }
     }
+
+    @Override
+    public boolean buscar(Integer parametroABuscar) {
+        return false;
+    }
 }

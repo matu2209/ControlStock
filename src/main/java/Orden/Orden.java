@@ -27,13 +27,11 @@ public abstract class Orden {
     private Integer legajo;              //Legajo del colaborador que realiza la orden
     private EstadoOrden estado;
 
-    public Orden(Producto producto, Integer cantidadProducto, Posicion posicion, LocalDateTime fecha, Integer legajo ) { //la orden se crea siempre EN_PROCESO
+    public Orden(Producto producto, Integer cantidadProducto ) { //la orden se crea siempre EN_PROCESO
         this.producto = producto;
         this.cantidadProducto = cantidadProducto;
-        this.posicion = posicion;
+        this.posicion=null;
         this.fechaCreacion = LocalDateTime.now();
-        this.fechaRealizacion = fecha;
-        this.legajo = legajo;
         this.estado = EstadoOrden.EN_PROCESO;
     }
 
@@ -104,7 +102,7 @@ public abstract class Orden {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getProducto(), getCantidadProducto(), getPosicion(), getFechaCreacion(), getFechaRealizacion(), getLegajo(), getEstado());
+        return Objects.hash(getProducto(), getCantidadProducto(), getFechaCreacion(), getEstado());
     }
 
     @Override
@@ -121,7 +119,7 @@ public abstract class Orden {
                 '}';
     }
 
-    public abstract void finalizarOrden(Integer legajoRealizador);
+    public abstract void finalizarOrden(Integer legajoRealizador, Posicion posicion);
     public abstract void cancelarOrden();
 
 }
