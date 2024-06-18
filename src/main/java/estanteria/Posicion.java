@@ -7,7 +7,6 @@ import enumeradores.VolumenDisponible;
 import java.util.Objects;
 
 public class Posicion implements Buscable, Comparable<Posicion> {
-
     private Integer modulo;
     private Integer nivel;
     private Integer x;

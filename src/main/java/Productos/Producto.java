@@ -6,13 +6,13 @@ import enumeradores.Prioridad;
 
 import java.util.Objects;
 
-public abstract class Producto implements Buscable <Producto, Integer> {
+public abstract class Producto implements Comparable<Producto>, Buscable <Integer>{
     private Integer hashProducto;
     private String marca;
     private String articulo;
     private Integer talle;
-    private Integer stock; //STOCK TOTAL DEL CENTRO DE DISTRIBUCION
-    private Double volumen;//armar una sobreescritura directa de volumen se me ocurre
+    private Integer stock; //STOCK TOTAL en el CENTRO DE DISTRIBUCION
+    private Double volumen;
     private Prioridad prioridad;
 
     public Producto(String marca, String articulo, Integer talle, Integer stock, Double volumen, Prioridad prioridad) {
@@ -95,14 +95,15 @@ public abstract class Producto implements Buscable <Producto, Integer> {
     }
 
     @Override
-    public Producto buscar(Integer hashProductoBuscado) {       //Busca por el hash del producto, devuelve el objeto si lo encuentra o null si no lo logra
-
-        if (this.hashProducto.equals(hashProductoBuscado)) {
-            return this;
-        }
-        return null;
-
+    public boolean buscar(Integer hashProductoBuscado) {       //Busca por el hash del producto, devuelve el objeto si lo encuentra o null si no lo logra
+        return (this.hashProducto.equals(hashProductoBuscado)) ? true : false;
     }
+
+    @Override
+    public int compareTo(Producto o) {
+        return this.getHashProducto().compareTo(o.getHashProducto());
+    }
+
 
     //public abstract int calcularPrioridad(Producto producto);//metodo capaz para calcular prioridad se me ocurre o prefieren enum?
     public void agregarProducto(Producto producto) {};//despues armo logica
