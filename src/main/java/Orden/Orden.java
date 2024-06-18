@@ -21,7 +21,7 @@ public abstract class Orden {
 
     private Producto producto;
     private Integer cantidadProducto;
-    private Posicion posicion;
+    private Integer posicion;
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaRealizacion;
     private Integer legajo;              //Legajo del colaborador que realiza la orden
@@ -51,11 +51,11 @@ public abstract class Orden {
         this.cantidadProducto = cantidadProducto;
     }
 
-    public Posicion getPosicion() {
+    public Integer getPosicion() {
         return posicion;
     }
 
-    public void setPosicion(Posicion posicion) {
+    public void setPosicion(Integer posicion) {
         this.posicion = posicion;
     }
 
@@ -119,7 +119,7 @@ public abstract class Orden {
                 '}';
     }
 
-    public abstract void finalizarOrden(Integer legajoRealizador, Posicion posicion);
+    public abstract void finalizarOrden(Integer legajoRealizador, Integer posicion);
     public abstract void cancelarOrden();
 
 }

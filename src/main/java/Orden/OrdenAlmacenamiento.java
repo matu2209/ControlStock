@@ -84,7 +84,7 @@ public class OrdenAlmacenamiento extends Orden implements Comparable<OrdenAlmace
 
 
     @Override
-    public void finalizarOrden(Integer legajoRealizador, Posicion posicion){
+    public void finalizarOrden(Integer legajoRealizador, Integer posicion){
         this.setPosicion(posicion);
         this.setLegajo(legajoRealizador);
         this.setEstado(EstadoOrden.FINALIZADA);

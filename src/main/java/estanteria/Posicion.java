@@ -6,12 +6,13 @@ import enumeradores.VolumenDisponible;
 
 import java.util.Objects;
 
-public class Posicion implements Buscable, Comparable<Posicion> {
+public class Posicion implements Buscable<Integer>, Comparable<Posicion> {
     private Integer modulo;
     private Integer nivel;
     private Integer x;
     private Integer hashPosicion;
     private VolumenDisponible volumenDisponible;
+    private double volumen;
     private Prioridad prioridad;
 
     public Posicion(Integer modulo, Integer nivel, Integer x, VolumenDisponible volumenDisponible, Prioridad prioridad) {
@@ -21,7 +22,15 @@ public class Posicion implements Buscable, Comparable<Posicion> {
         this.volumenDisponible = volumenDisponible;
         this.prioridad = prioridad;
         this.hashPosicion= Objects.hash(modulo,nivel, x, prioridad);
+        this.volumen = 100.0;
+    }
 
+    public double getVolumen() {
+        return volumen;
+    }
+
+    public void setVolumen(double volumen) {
+        this.volumen = volumen;
     }
 
     public Integer getModulo() {
@@ -107,5 +116,9 @@ public class Posicion implements Buscable, Comparable<Posicion> {
     }
 
 
+    @Override
+    public boolean buscar(Integer parametroABuscar) {
+        return this.hashPosicion.equals(parametroABuscar);
+    }
 }
 
