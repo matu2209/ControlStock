@@ -1,44 +1,30 @@
 package estanteria;
 
 import Interfaces.Buscable;
+import Interfaces.Filtrable;
+import enumeradores.Disponible;
 import enumeradores.Prioridad;
 import enumeradores.VolumenDisponible;
 
 import java.util.Objects;
 
-public class Posicion implements Buscable<Integer>, Comparable<Posicion> {
+public class Posicion implements Buscable<Integer>, Comparable<Posicion>, Filtrable<Double> {
     private Integer modulo;
     private Integer nivel;
     private Integer x;
-    private Integer hashPosicion;
-    private VolumenDisponible volumenDisponible;
-    private double volumen;
+    private final Integer hashPosicion;
+    private Double volumenDisponible;
     private Prioridad prioridad;
+    private Disponible disponibilidad;
 
-    public Posicion(Integer modulo, Integer nivel, Integer x, VolumenDisponible volumenDisponible, Prioridad prioridad) {
+    public Posicion(Integer modulo, Integer nivel, Integer x, Prioridad prioridad) {
         this.modulo = modulo;
         this.nivel = nivel;
         this.x = x;
-        this.volumenDisponible = volumenDisponible;
-        this.prioridad = prioridad;
         this.hashPosicion= Objects.hash(modulo,nivel, x, prioridad);
-        this.volumen = 100.0;
-    }
-
-    public double getVolumen() {
-        return volumen;
-    }
-
-    public void setVolumen(double volumen) {
-        this.volumen = volumen;
-    }
-
-    public Integer getModulo() {
-        return modulo;
-    }
-
-    public void setModulo(Integer modulo) {
-        this.modulo = modulo;
+        this.volumenDisponible = VolumenDisponible.MEDIO.getCapacidad(); //SE CREA POR DEFECTO AL 80% DE LA CAPACIDAD
+        this.prioridad = prioridad;
+        this.disponibilidad=Disponible.DISPONIBLE;
     }
 
     public Integer getNivel() {
@@ -47,6 +33,14 @@ public class Posicion implements Buscable<Integer>, Comparable<Posicion> {
 
     public void setNivel(Integer nivel) {
         this.nivel = nivel;
+    }
+
+    public Integer getModulo() {
+        return modulo;
+    }
+
+    public void setModulo(Integer modulo) {
+        this.modulo = modulo;
     }
 
     public Integer getX() {
@@ -61,15 +55,12 @@ public class Posicion implements Buscable<Integer>, Comparable<Posicion> {
         return hashPosicion;
     }
 
-    public void setHashPosicion(Integer hashPosicion) {
-        this.hashPosicion = hashPosicion;
-    }
 
-    public VolumenDisponible getVolumenDisponible() {
+    public Double getVolumenDisponible() {
         return volumenDisponible;
     }
 
-    public void setVolumenDisponible(VolumenDisponible volumenDisponible) {
+    public void setVolumenDisponible(Double volumenDisponible) {
         this.volumenDisponible = volumenDisponible;
     }
 
@@ -81,33 +72,12 @@ public class Posicion implements Buscable<Integer>, Comparable<Posicion> {
         this.prioridad = prioridad;
     }
 
-    @Override
-    public int hashCode() {
-        return hashPosicion;
+    public Disponible getDisponibilidad() {
+        return disponibilidad;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Posicion posicion = (Posicion) o;
-        return Objects.equals(modulo, posicion.modulo) &&
-                Objects.equals(nivel, posicion.nivel) &&
-                Objects.equals(x, posicion.x) &&
-                Objects.equals(volumenDisponible, posicion.volumenDisponible) &&
-                Objects.equals(prioridad, posicion.prioridad) &&
-                Objects.equals(hashPosicion, posicion.hashPosicion);
-    }
-
-    @Override
-    public String toString() {
-        return "Posicion{" +
-                "modulo=" + modulo +
-                ", nivel=" + nivel +
-                ", x=" + x +
-                ", hash=" + hashPosicion +
-                ", volumenDisponible=" + volumenDisponible +
-                ", prioridad=" + prioridad + '}';
+    public void setDisponibilidad(Disponible disponibilidad) {
+        this.disponibilidad = disponibilidad;
     }
 
     @Override
@@ -119,6 +89,37 @@ public class Posicion implements Buscable<Integer>, Comparable<Posicion> {
     @Override
     public boolean buscar(Integer parametroABuscar) {
         return this.hashPosicion.equals(parametroABuscar);
+    }
+
+    @Override
+    public boolean filter(Double parametroFiltrado){ //SI EL VOLUMEN DISPONIBLE ES MAYOR O IGUAL AL VOLUMEN DEL PARAMETRO, RETORNA TRUE
+        return this.getVolumenDisponible() >= parametroFiltrado;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Posicion posicion = (Posicion) o;
+        return Objects.equals(getModulo(), posicion.getModulo()) && Objects.equals(getNivel(), posicion.getNivel()) && Objects.equals(getX(), posicion.getX()) && Objects.equals(getHashPosicion(), posicion.getHashPosicion()) && Objects.equals(getVolumenDisponible(), posicion.getVolumenDisponible()) && getPrioridad() == posicion.getPrioridad() && getDisponibilidad() == posicion.getDisponibilidad();
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getHashPosicion();
+    }
+
+    @Override
+    public String toString() {
+        return "Posicion{" +
+                "modulo=" + modulo +
+                ", nivel=" + nivel +
+                ", x=" + x +
+                ", hashPosicion=" + hashPosicion +
+                ", volumenDisponible=" + volumenDisponible +
+                ", prioridad=" + prioridad +
+                ", disponibilidad=" + disponibilidad +
+                '}';
     }
 }
 

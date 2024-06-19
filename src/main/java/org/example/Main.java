@@ -1,17 +1,5 @@
 package org.example;
 
-import Productos.Calzado;
-import Productos.Producto;
-import enumeradores.MedidasCalzado;
-import enumeradores.Prioridad;
-import enumeradores.Segmento;
-import enumeradores.VolumenDisponible;
-import estanteria.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 public class Main {
     public static void main(String[] args) {
 

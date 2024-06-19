@@ -1,0 +1,6 @@
+package enumeradores;
+
+public enum Disponible { //SE VA A USAR PARA BLOQUEAR UNA POSICION POR EJEMPLO EN CASO DE UNA TOMA DE STOCK
+    DISPONIBLE,
+    BLOQUEADO
+}
