@@ -1,7 +1,12 @@
+import Gestor.GestorGenerico;
+import Productos.Producto;
+
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-
+import java.util.LinkedList;
 
 
 public class PickeoMenu extends JFrame {
@@ -45,9 +50,22 @@ public class PickeoMenu extends JFrame {
         setVisible(true);
     }
 
-    private void obtenerOrdenDePickeo() {
-        // Implementar la obtención de la orden de pickeo
-        JOptionPane.showMessageDialog(this, "Obtener Orden de Pickeo");
+    private void obtenerOrdenDePickeo(Producto producto) {
+
+        String[] columnNames = {"Ubicación", "Marca", "Nombre Artículo", "Talle", "Cantidad/Stock"};
+        DefaultTableModel modeloLista = new DefaultTableModel(columnNames, 0);
+        /*
+        for(){
+            Object[] row = {producto.getHashProducto(), producto.getMarca(), producto.getArticulo(), producto.getTalle(), producto.getStock()};
+            model.addRow(row);
+        }
+
+        */
+        JTable productTable = new JTable(modeloLista);//CREA LA TABLA A PARTIR DEL DAFAULT
+        JScrollPane scrollPane = new JScrollPane(productTable);//PERMITE EL DESPLAZAMIENTO
+        scrollPane.setPreferredSize(new Dimension(480, 290));
+
+        JOptionPane.showMessageDialog(this, scrollPane, "Lista de Productos", JOptionPane.PLAIN_MESSAGE);
     }
 
     private void entregarOrdenDePickeo() {
