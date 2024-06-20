@@ -1,35 +1,33 @@
 package SistemaPEMNS;
 
-import Gestor.GestorGenerico;
+import Gestor.GestorCollGen;
 
+import Gestor.GestorMapGen;
 import Productos.Producto;
 import Orden.*;
-import Productos.Producto;
 import enumeradores.DestinoEcommerce;
 import enumeradores.Empresa;
-import enumeradores.Prioridad;
-import enumeradores.VolumenDisponible;
 import estanteria.Estanteria;
 import estanteria.Posicion;
 import estanteria.ProductoAlmacenado;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.TreeSet;
+import java.util.*;
 
 public class SistemaPEMNS {
 
-    private final GestorGenerico<Producto, TreeSet<Producto>,Integer> gestorProductos;
-    private final GestorGenerico<OrdenAlmacenamiento, PriorityQueue<OrdenAlmacenamiento>,Integer> gestorOrdenesAlmacenamiento;
-    private final GestorGenerico<OrdenPicking, PriorityQueue<OrdenPicking>,Integer> gestorOrdenesPicking;
-    private final GestorGenerico<Estanteria, ArrayList<Estanteria>, Integer> gestorEstanteria;
+    private final GestorCollGen<Producto, TreeSet<Producto>,Integer> gestorProductos;
+    private final GestorCollGen<OrdenAlmacenamiento, PriorityQueue<OrdenAlmacenamiento>,Integer> gestorOrdenesAlmacenamiento;
+    private final GestorCollGen<OrdenPicking, PriorityQueue<OrdenPicking>,Integer> gestorOrdenesPicking;
+    private final GestorCollGen<Estanteria, ArrayList<Estanteria>, Integer> gestorEstanteria;
+    private final GestorMapGen<Producto, Posicion, Map<Producto, Posicion>, Integer> mapaRelacionalRastreo; //es quien va a llevar la relacion entre un producto y las ubicaciones donde se encuentra almacenado
+                                                // totalmente necesario para las operaciones de busqueda tanto para almacenamiento como para pickeo
 
     public SistemaPEMNS() {
-        this.gestorProductos = new GestorGenerico<>(new TreeSet<Producto>());
-        this.gestorOrdenesAlmacenamiento = new GestorGenerico<>(new PriorityQueue<OrdenAlmacenamiento>());
-        this.gestorOrdenesPicking = new GestorGenerico<>(new PriorityQueue<OrdenPicking>());
-        this.gestorEstanteria = new GestorGenerico<>(new ArrayList<Estanteria>());
+        this.gestorProductos = new GestorCollGen<>(new TreeSet<Producto>());
+        this.gestorOrdenesAlmacenamiento = new GestorCollGen<>(new PriorityQueue<OrdenAlmacenamiento>());
+        this.gestorOrdenesPicking = new GestorCollGen<>(new PriorityQueue<OrdenPicking>());
+        this.gestorEstanteria = new GestorCollGen<>(new ArrayList<Estanteria>());
+        this.mapaRelacionalRastreo=new GestorMapGen<>(new TreeMap<>());
     }
 
     public boolean generarOrdenPicking(Integer hashProducto, int cantidad, String idPedido, DestinoEcommerce ecommerce) {

@@ -2,6 +2,7 @@ package Productos;
 
 
 import Interfaces.Buscable;
+import enumeradores.Empresa;
 import enumeradores.Prioridad;
 
 import java.util.Objects;
@@ -14,8 +15,9 @@ public abstract class Producto implements Comparable<Producto>, Buscable <Intege
     private Integer stock; //STOCK TOTAL en el CENTRO DE DISTRIBUCION
     private Double volumen;
     private Prioridad prioridad;
+    private Empresa empresa;
 
-    public Producto(String marca, String articulo, Integer talle, Integer stock, Double volumen, Prioridad prioridad) {
+    public Producto(String marca, String articulo, Integer talle, Integer stock, Double volumen, Prioridad prioridad, Empresa empresa) {
         this.hashProducto = Objects.hash(marca, articulo, talle);
         this.marca = marca;
         this.articulo = articulo;
@@ -23,6 +25,7 @@ public abstract class Producto implements Comparable<Producto>, Buscable <Intege
         this.stock = stock;
         this.volumen = volumen;
         this.prioridad = prioridad;
+        this.empresa = empresa;
     }
 
     public Integer getHashProducto() {
@@ -81,12 +84,21 @@ public abstract class Producto implements Comparable<Producto>, Buscable <Intege
         this.prioridad = prioridad;
     }
 
+    public Empresa getEmpresa() {
+        return empresa;
+    }
+
+    public void setEmpresa(Empresa empresa) {
+        this.empresa = empresa;
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Producto producto = (Producto) o;
-        return Objects.equals(getHashProducto(), producto.getHashProducto()) && Objects.equals(getMarca(), producto.getMarca()) && Objects.equals(getArticulo(), producto.getArticulo()) && Objects.equals(getTalle(), producto.getTalle()) && Objects.equals(getStock(), producto.getStock()) && Objects.equals(getVolumen(), producto.getVolumen()) && getPrioridad() == producto.getPrioridad();
+        return Objects.equals(getHashProducto(), producto.getHashProducto()) && Objects.equals(getMarca(), producto.getMarca()) && Objects.equals(getArticulo(), producto.getArticulo()) && Objects.equals(getTalle(), producto.getTalle()) && Objects.equals(getStock(), producto.getStock()) && Objects.equals(getVolumen(), producto.getVolumen()) && getPrioridad() == producto.getPrioridad() && getEmpresa() == producto.getEmpresa();
     }
 
     @Override
@@ -96,19 +108,13 @@ public abstract class Producto implements Comparable<Producto>, Buscable <Intege
 
     @Override
     public boolean buscar(Integer hashProductoBuscado) {       //Busca por el hash del producto, devuelve el objeto si lo encuentra o null si no lo logra
-        return (this.hashProducto.equals(hashProductoBuscado)) ? true : false;
+        return this.hashProducto.equals(hashProductoBuscado);
     }
 
     @Override
     public int compareTo(Producto o) {
         return this.getHashProducto().compareTo(o.getHashProducto());
     }
-
-
-    //public abstract int calcularPrioridad(Producto producto);//metodo capaz para calcular prioridad se me ocurre o prefieren enum?
-    public void agregarProducto(Producto producto) {};//despues armo logica
-    public void eliminarProducto(Producto producto) {};
-    public void modificarProducto(Producto producto) {};
 
 }
 

@@ -1,41 +1,36 @@
 package estanteria;
 
 
+import Gestor.GestorCollGen;
 import Interfaces.Buscable;
+import Interfaces.Filtrable;
+import enumeradores.Empresa;
 import enumeradores.Prioridad;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
-public abstract class Estanteria implements Buscable<Integer> {
-    private static Integer autoId=1;
-    private final Integer idEstanteria;
-    private final Map<Posicion, ProductoAlmacenado> estanteria;
-    private Prioridad prioridad;
+public abstract class Estanteria implements Buscable<Integer>, Filtrable<Prioridad> {
+    private final GestorCollGen<Posicion,List<Posicion>,Integer> listaPosiciones;
+    private final Prioridad prioridad;
+    private final Empresa empresa;
 
-    public Estanteria(Prioridad prioridad) {
-        idEstanteria=autoId++;
-        estanteria = new HashMap<>();
+    public Estanteria(Prioridad prioridad, Empresa empresa) {
+        this.listaPosiciones = new GestorCollGen<>(new LinkedList<>());
         this.prioridad = prioridad;
+        this.empresa=empresa;
     }
 
-    public abstract void crearPosicionesEnMaximos();
 
-    public Map<Posicion, ProductoAlmacenado> getEstanteria() {
-        return estanteria;
-    }
-
-    public Integer getIdEstanteria() {
-        return idEstanteria;
+    public GestorCollGen<Posicion, List<Posicion>, Integer> getListaPosiciones() {
+        return listaPosiciones;
     }
 
     public Prioridad getPrioridad() {
         return prioridad;
     }
 
-    public void setPrioridad(Prioridad prioridad) {
-        this.prioridad = prioridad;
+    public Empresa getEmpresa() {
+        return empresa;
     }
 
     @Override
@@ -43,45 +38,23 @@ public abstract class Estanteria implements Buscable<Integer> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Estanteria that = (Estanteria) o;
-        return Objects.equals(getEstanteria(), that.getEstanteria()) && getPrioridad() == that.getPrioridad();
+        return Objects.equals(getListaPosiciones(), that.getListaPosiciones()) && getPrioridad() == that.getPrioridad() && getEmpresa() == that.getEmpresa();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getEstanteria(), getPrioridad());
+        return Objects.hash(getListaPosiciones(), getPrioridad(), getEmpresa());
     }
 
     @Override
     public String toString() {
-        return
-                "Estanteria{" + "idEstanteria=" + idEstanteria +
-                "estanteria=" + estanteria +
+        return "Estanteria{" +
+                "listaPosiciones=" + listaPosiciones +
                 ", prioridad=" + prioridad +
+                ", empresa=" + empresa +
                 '}';
     }
 
-    /*public void agregarProducto(int posicion, Producto producto) {
-        if (posicion >= 0 && posicion < 300) {
-            Posicion p = estanteria.get(posicion);
-            if (producto.getVolumen() < p.getVolumen()) {
-                p.agregarObjeto(producto);
-            } else {
-                System.out.println("La posición " + posicion + " está llena.");
-            }
-        } else {
-            System.out.println("Posición inválida.");
-        }
-    }
+    public abstract void crearPosicionesEstanteria();
 
-    public List<Producto> obtenerProductosEnPosicion(int posicion) {
-        if (posicion >= 0 && posicion < 300) {
-            estanteria.get(posicion).mostrarContenido();
-            return estanteria.get(posicion).getProductos();
-        } else {
-            System.out.println("Posición inválida.");
-            return null;
-        }
-    }
-
-    */
 }
