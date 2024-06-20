@@ -25,7 +25,7 @@ public abstract class Producto implements Comparable<Producto>, Buscable <Intege
         this.stock = stock;
         this.volumen = volumen;
         this.prioridad = prioridad;
-        this.empresa = empresa;
+        this.empresa = empresa; 
     }
 
     public Integer getHashProducto() {
