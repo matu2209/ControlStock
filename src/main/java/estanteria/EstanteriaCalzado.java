@@ -23,7 +23,7 @@ public class EstanteriaCalzado extends Estanteria {
         for (int modulo = 1; modulo <= ValoresMaximos.MAXIMO_MODULOS.getValor(); modulo++) {
             for (int nivel = 1; nivel <= ValoresMaximos.MAXIMO_NIVELES.getValor(); nivel++) {
                 for (int x = 1; x <= ValoresMaximos.MAXIMO_X_CALZADO.getValor(); x++) {
-                    Posicion posicion = new Posicion(modulo, nivel, x, super.getPrioridad());
+                    Posicion posicion = new Posicion(modulo, nivel, x,this.getIdEstanteria(), super.getPrioridad());
                     super.getListaPosiciones().agregar(posicion);
                 }
             }

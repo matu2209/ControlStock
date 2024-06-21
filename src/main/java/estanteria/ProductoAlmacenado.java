@@ -1,5 +1,6 @@
 package estanteria;
 
+import Interfaces.Buscable;
 import Productos.Producto;
 
 import java.util.Objects;
@@ -46,6 +47,7 @@ public class ProductoAlmacenado {
         ProductoAlmacenado that = (ProductoAlmacenado) o;
         return Objects.equals(getProductoAlmacenado(), that.getProductoAlmacenado()) && Objects.equals(getStockDePosicion(), that.getStockDePosicion()) && Objects.equals(getVolumenAlmacenado(), that.getVolumenAlmacenado());
     }
+
 
     @Override
     public int hashCode() {
