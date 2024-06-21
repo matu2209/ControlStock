@@ -20,7 +20,7 @@ public class SistemaPEMNS {
     private final GestorCollGen<OrdenPicking, PriorityQueue<OrdenPicking>,Integer> gestorOrdenesPicking;
     private final GestorCollGen<Estanteria, ArrayList<Estanteria>, Integer> gestorEstanteria;
     private final GestorMapGen<Producto, Posicion, Map<Producto, Posicion>, Integer> mapaRelacionalRastreo; //es quien va a llevar la relacion entre un producto y las ubicaciones donde se encuentra almacenado
-                                                // totalmente necesario para las operaciones de busqueda tanto para almacenamiento como para pickeo
+                                                                                                            // totalmente necesario para las operaciones de busqueda tanto para almacenamiento como para pickeo
 
     public SistemaPEMNS() {
         this.gestorProductos = new GestorCollGen<>(new TreeSet<Producto>());
