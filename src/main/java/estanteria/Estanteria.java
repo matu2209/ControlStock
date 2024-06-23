@@ -9,8 +9,8 @@ import enumeradores.Prioridad;
 
 import java.util.*;
 
-public abstract class Estanteria implements Buscable<Integer>, Filtrable<Prioridad> {
-    private final GestorCollGen<Posicion,List<Posicion>,Integer> listaPosiciones;
+public abstract class Estanteria implements Buscable<Integer>, Filtrable<Prioridad>, Comparable<Estanteria> {
+    private final GestorCollGen<Posicion,List<Posicion>,Integer, Double> listaPosiciones;
     private final Prioridad prioridad;
     private final Empresa empresa;
 
@@ -21,7 +21,7 @@ public abstract class Estanteria implements Buscable<Integer>, Filtrable<Priorid
     }
 
 
-    public GestorCollGen<Posicion, List<Posicion>, Integer> getListaPosiciones() {
+    public GestorCollGen<Posicion, List<Posicion>, Integer, Double> getListaPosiciones() {
         return listaPosiciones;
     }
 
@@ -56,6 +56,5 @@ public abstract class Estanteria implements Buscable<Integer>, Filtrable<Priorid
     }
 
     public abstract void crearPosicionesEstanteria();
-
 
 }

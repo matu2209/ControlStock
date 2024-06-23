@@ -42,6 +42,17 @@ public class EstanteriaIndAcc extends Estanteria {
     }
 
     @Override
+    public int compareTo(Estanteria otra) {
+        // Verificar que otra sea una estanteria de calzado
+        if (otra instanceof EstanteriaIndAcc) {
+            // Comparar por idEstanteria
+            return this.getIdEstanteria().compareTo(((EstanteriaIndAcc) otra).getIdEstanteria());
+        }
+        // Si no es una estanteria calzado lanzamos una excepción
+        throw new IllegalArgumentException("No se puede comparar la entanteria porque no es una Estanteria de calzado");
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
