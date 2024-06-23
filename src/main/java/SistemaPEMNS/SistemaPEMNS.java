@@ -6,7 +6,6 @@ import Gestor.GestorMapGen;
 import Productos.Producto;
 import Orden.*;
 import enumeradores.DestinoEcommerce;
-import enumeradores.Empresa;
 import enumeradores.Prioridad;
 import estanteria.Estanteria;
 import estanteria.Posicion;
@@ -21,7 +20,7 @@ public class SistemaPEMNS {
     private final GestorCollGen<OrdenPicking, PriorityQueue<OrdenPicking>,Integer, String> gestorOrdenesPicking;
     private final GestorCollGen<Estanteria, ArrayList<Estanteria>, Integer, Prioridad> gestorEstanteria;  //vamos a trabajar por busqueda desde esta collection pero estaria bueno trabajarlo desde mapaRelacionalRastreo para optimizar las busquedas
     private final GestorMapGen<Producto, Integer, Prioridad, Posicion, Integer, Double, Map<Producto, Posicion>> mapaRelacionalRastreo; //es quien va a llevar la relacion entre un producto y las ubicaciones donde se encuentra almacenado
-                                                                                                            // totalmente necesario para las operaciones de busqueda tanto para almacenamiento como para pickeo
+    private final GestorMapGen<Posicion, Integer, Double, ProductoAlmacenado, Integer, Producto, Map<Posicion, ProductoAlmacenado>>mapaRelacionalAlmacenamiento;// totalmente necesario para las operaciones de busqueda tanto para almacenamiento como para pickeo
 
 
 
@@ -31,6 +30,7 @@ public class SistemaPEMNS {
         this.gestorOrdenesPicking = new GestorCollGen<>(new PriorityQueue<OrdenPicking>());
         this.gestorEstanteria = new GestorCollGen<>(new ArrayList<>());
         this.mapaRelacionalRastreo=new GestorMapGen<>(new TreeMap<>());
+        this.mapaRelacionalAlmacenamiento=new GestorMapGen<>(new TreeMap<>());
     }
 
     public GestorCollGen<Producto, TreeSet<Producto>, Integer, Prioridad> getGestorProductos() {
@@ -53,8 +53,29 @@ public class SistemaPEMNS {
         return gestorOrdenesAlmacenamiento;
     }
 
+    public GestorMapGen<Posicion, Integer, Double, ProductoAlmacenado, Integer, Producto, Map<Posicion, ProductoAlmacenado>> getMapaRelacionalAlmacenamiento() {
+        return mapaRelacionalAlmacenamiento;
+    }
 
     //HAY QUE MODIFICAR LO DE ABAJO PARA QUE NO TIRE ERROR, AHI ME PONGO A HACERLO
+
+    public boolean generarOrdenPickingDesdePedido (Integer hashProducto, Integer cantidad, String idPedido, DestinoEcommerce destinoEcommerce){
+        List<Posicion> posicionesDelProducto = this.getMapaRelacionalRastreo().buscarPorClaveTodos(hashProducto);
+        Integer cantidadAAlmacenar = cantidad;
+        int posicion = 0;
+        while(cantidadAAlmacenar>0){
+            if(posicionesDelProducto.get(posicion++){
+
+            }
+            new OrdenPicking(hashProducto, cantidad );
+        }
+
+
+
+        return ;
+    }
+
+
     /*public boolean generarOrdenPicking(Integer hashProducto, int cantidad, String idPedido, DestinoEcommerce ecommerce) {
         //buscar el producto
 

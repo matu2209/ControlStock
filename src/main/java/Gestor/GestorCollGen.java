@@ -30,8 +30,12 @@ public class GestorCollGen<E extends Buscable<B> & Filtrable <F> & Comparable <E
         return elementos.contains(elemento);
     }
 
-    public E buscar(B criterioBusqueda) {
+    public E buscarPrimero(B criterioBusqueda) {
         return elementos.stream().filter(elemento -> elemento.buscar(criterioBusqueda)).findFirst().orElse(null);
+    }
+
+    public List<E> buscarTodos(B criterioBusqueda) {
+        return elementos.stream().filter(elemento -> elemento.buscar(criterioBusqueda)).toList();
     }
 
     public List<E> filtrar(F criterioBusqueda) {

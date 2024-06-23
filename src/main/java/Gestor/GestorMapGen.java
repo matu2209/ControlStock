@@ -4,6 +4,7 @@ import Interfaces.Buscable;
 import Interfaces.Filtrable;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -37,7 +38,7 @@ public class GestorMapGen<K extends Buscable<B> & Filtrable<F> & Comparable <K>,
         return mapa.containsValue(valor);
     }
 
-    public V buscarPorClave(B criterioBusqueda) {
+    public V buscarPorClavePrimero(B criterioBusqueda) {
         return mapa.keySet().stream()
                 .filter(clave -> clave.buscar(criterioBusqueda))
                 .findFirst()
@@ -45,12 +46,27 @@ public class GestorMapGen<K extends Buscable<B> & Filtrable<F> & Comparable <K>,
                 .orElse(null);
     }
 
-    public K buscarPorValor(C criterioBusqueda) {
+    public K buscarPorValorPrimero(C criterioBusqueda) {
         return mapa.entrySet().stream()
                 .filter(entry -> entry.getValue().buscar(criterioBusqueda))
                 .map(Map.Entry::getKey)
                 .findFirst()
                 .orElse(null);
+    }
+
+    // Método para buscar valores cuyas claves cumplen con el criterio de búsqueda
+    public List<V> buscarPorClaveTodos(B criterioBusqueda) {
+        return mapa.keySet().stream()
+                .filter(clave -> clave.buscar(criterioBusqueda))
+                .map(mapa::get)
+                .collect(Collectors.toList());
+    }
+
+    public List<K> buscarPorValorTodos(C criterioBusqueda) {
+        return mapa.entrySet().stream()
+                .filter(entry -> entry.getValue().buscar(criterioBusqueda))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
     }
 
     public Set<K> filtrarClaves(F criterioFiltrado) {
