@@ -24,7 +24,7 @@ public class Posicion implements Buscable<Integer>, Comparable<Posicion>, Filtra
         this.x = x;
         this.idEstanteria = idEstanteria;
         this.hashPosicion= Objects.hash(modulo,nivel, x, idEstanteria, prioridad);
-        this.volumenDisponible = VolumenDisponible.MEDIO.getCapacidad(); //SE CREA POR DEFECTO AL 80% DE LA CAPACIDAD
+        this.volumenDisponible = VolumenDisponible.ALTO.getCapacidad(); //SE CREA POR DEFECTO AL 80% DE LA CAPACIDAD
         this.prioridad = prioridad;
         this.disponibilidad=Disponible.DISPONIBLE;
     }
