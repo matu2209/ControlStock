@@ -2,12 +2,13 @@ package Productos;
 
 
 import Interfaces.Buscable;
+import Interfaces.Filtrable;
 import enumeradores.Empresa;
 import enumeradores.Prioridad;
 
 import java.util.Objects;
 
-public abstract class Producto implements Comparable<Producto>, Buscable <Integer>{
+public abstract class Producto implements Comparable<Producto>, Buscable <Integer>, Filtrable<Prioridad> {
     private Integer hashProducto;
     private String marca;
     private String articulo;
@@ -116,6 +117,24 @@ public abstract class Producto implements Comparable<Producto>, Buscable <Intege
         return this.getHashProducto().compareTo(o.getHashProducto());
     }
 
+    @Override
+    public boolean filter(Prioridad parametroFiltrado) {
+        return this.getPrioridad().equals(parametroFiltrado);
+    }
+
+    @Override
+    public String toString() {
+        return "Producto{" +
+                "hashProducto=" + hashProducto +
+                ", marca='" + marca + '\'' +
+                ", articulo='" + articulo + '\'' +
+                ", talle=" + talle +
+                ", stock=" + stock +
+                ", volumen=" + volumen +
+                ", prioridad=" + prioridad +
+                ", empresa=" + empresa +
+                '}';
+    }
 }
 
 

@@ -1,23 +1,24 @@
 package Gestor;
 
 import Interfaces.Buscable;
+import Interfaces.Filtrable;
 
 import java.util.*;
 
 
-public class GestorCollGen<T extends Buscable<C>, U extends Collection<T>,C> { //falta parametrizar a Buscable
+public class GestorCollGen<E extends Buscable<B> & Filtrable <F> & Comparable <E>, C extends Collection<E>, B, F> { //falta parametrizar a Buscable
 
-    private final U elementos;
+    private final C elementos;
 
-    public GestorCollGen(U collection) {
+    public GestorCollGen(C collection) {
         this.elementos = collection;
     }
 
-    public boolean agregar(T elemento) {
+    public boolean agregar(E elemento) {
         return elementos.add(elemento);
     }
 
-    public boolean eliminar(T elemento) {
+    public boolean eliminar(E elemento) {
         return elementos.remove(elemento);
     }
 
@@ -25,18 +26,22 @@ public class GestorCollGen<T extends Buscable<C>, U extends Collection<T>,C> { /
         return elementos.size();
     }
 
-    public boolean contiene(T elemento) {
+    public boolean contiene(E elemento) {
         return elementos.contains(elemento);
     }
 
-    public T buscar(C elemento) {
-        return elementos.stream().filter(el -> el.equals(elemento)).findFirst().orElse(null);
+    public E buscar(B criterioBusqueda) {
+        return elementos.stream().filter(elemento -> elemento.buscar(criterioBusqueda)).findFirst().orElse(null);
+    }
+
+    public List<E> filtrar(F criterioBusqueda) {
+        return elementos.stream().filter(elemento -> elemento.filter(criterioBusqueda)).toList();
     }
     public void limpiar() {
         elementos.clear();
     }
 
-    public Iterator<T> iterator() {
+    public Iterator<E> iterator() {
         return elementos.iterator();
     }
 

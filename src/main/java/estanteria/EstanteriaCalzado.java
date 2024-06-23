@@ -4,7 +4,7 @@ import enumeradores.*;
 
 import java.util.Objects;
 
-public class EstanteriaCalzado extends Estanteria {
+public class EstanteriaCalzado extends Estanteria{
     private static Integer autoId=1;
     private final Integer idEstanteria;
 
@@ -40,6 +40,17 @@ public class EstanteriaCalzado extends Estanteria {
         return this.getIdEstanteria().equals(parametroABuscar);
     }
 
+
+    @Override
+    public int compareTo(Estanteria otra) {
+        // Verificar que otra sea una estanteria de calzado
+        if (otra instanceof EstanteriaCalzado) {
+            // Comparar por idEstanteria
+            return this.getIdEstanteria().compareTo(((EstanteriaCalzado) otra).getIdEstanteria());
+        }
+        // Si no es una estanteria calzado lanzamos una excepción
+        throw new IllegalArgumentException("No se puede comparar la entanteria porque no es una Estanteria de calzado");
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -60,4 +71,5 @@ public class EstanteriaCalzado extends Estanteria {
                 "idEstanteria=" + idEstanteria +
                 '}';
     }
+
 }

@@ -1,50 +1,90 @@
 package Gestor;
 
 import Interfaces.Buscable;
+import Interfaces.Filtrable;
 
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-public class GestorMapGen<  K extends Buscable<T>, V extends Buscable <T>, G extends Map<K,V>, T> {
 
-    private final G elementos;
+public class GestorMapGen<K extends Buscable<B> & Filtrable<F> & Comparable <K>, B, F,  V extends Buscable<C> & Filtrable<G> & Comparable <V>, C, G, M extends Map<K, V>> {
 
-    public GestorMapGen(G map) {
-        this.elementos = map;
+    private final M mapa;
+
+    public GestorMapGen(M mapa) {
+        this.mapa = mapa;
     }
 
     public V agregar(K clave, V valor) {
-        return elementos.put(clave, valor);
+        return mapa.put(clave, valor);
     }
 
     public V eliminar(K clave) {
-        return elementos.remove(clave);
+        return mapa.remove(clave);
     }
 
     public int tamanio() {
-        return elementos.size();
+        return mapa.size();
     }
 
     public boolean contieneClave(K clave) {
-        return elementos.containsKey(clave);
+        return mapa.containsKey(clave);
     }
 
-    public V buscar(K clave) {
-        return elementos.get(clave);
+    public boolean contieneValor(V valor) {
+        return mapa.containsValue(valor);
+    }
+
+    public V buscarPorClave(B criterioBusqueda) {
+        return mapa.keySet().stream()
+                .filter(clave -> clave.buscar(criterioBusqueda))
+                .findFirst()
+                .map(mapa::get)
+                .orElse(null);
+    }
+
+    public K buscarPorValor(C criterioBusqueda) {
+        return mapa.entrySet().stream()
+                .filter(entry -> entry.getValue().buscar(criterioBusqueda))
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public Set<K> filtrarClaves(F criterioFiltrado) {
+        return mapa.keySet().stream()
+                .filter(clave -> clave.filter(criterioFiltrado))
+                .collect(Collectors.toSet());
+    }
+
+    public Collection<V> filtrarValores(G criterioFiltrado) {
+        return mapa.values().stream()
+                .filter(valor -> valor.filter(criterioFiltrado))
+                .collect(Collectors.toList());
     }
 
     public void limpiar() {
-        elementos.clear();
+        mapa.clear();
     }
 
-    public Iterator<K> iterator() {
-        return elementos.keySet().iterator();
+    public Set<K> claves() {
+        return mapa.keySet();
+    }
+
+    public Collection<V> valores() {
+        return mapa.values();
+    }
+
+    public Set<Map.Entry<K, V>> entradas() {
+        return mapa.entrySet();
     }
 
     @Override
     public String toString() {
         return "GestorMapGen{" +
-                "elementos=" + elementos +
+                "mapa=" + mapa +
                 '}';
     }
 }
