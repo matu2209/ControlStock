@@ -1,7 +1,7 @@
 package estanteria;
 
 
-import Gestor.GestorCollGen;
+import gestores.GestorCollGen;
 import Interfaces.Buscable;
 import Interfaces.Filtrable;
 import enumeradores.Empresa;

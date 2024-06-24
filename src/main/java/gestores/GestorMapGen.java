@@ -1,4 +1,4 @@
-package Gestor;
+package gestores;
 
 import Interfaces.Buscable;
 import Interfaces.Filtrable;
@@ -69,13 +69,13 @@ public class GestorMapGen<K extends Buscable<B> & Filtrable<F> & Comparable <K>,
                 .collect(Collectors.toList());
     }
 
-    public Set<K> filtrarClaves(F criterioFiltrado) {
+    public List<K> filtrarClaves(F criterioFiltrado) {
         return mapa.keySet().stream()
                 .filter(clave -> clave.filter(criterioFiltrado))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
-    public Collection<V> filtrarValores(G criterioFiltrado) {
+    public List<V> filtrarValores(G criterioFiltrado) {
         return mapa.values().stream()
                 .filter(valor -> valor.filter(criterioFiltrado))
                 .collect(Collectors.toList());

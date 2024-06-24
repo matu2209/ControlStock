@@ -2,10 +2,8 @@ package Orden;
 
 import Interfaces.Buscable;
 import Interfaces.Filtrable;
-import Productos.Producto;
 import enumeradores.Empresa;
 import enumeradores.EstadoOrden;
-import estanteria.Posicion;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -16,8 +14,8 @@ public class OrdenAlmacenamiento extends Orden implements Comparable<OrdenAlmace
     private String nroRemito;
     private Empresa empresa;
 
-    public OrdenAlmacenamiento(Producto producto, Integer cantidadProducto, String nroRemito, Empresa empresa) {
-        super(producto, cantidadProducto);
+    public OrdenAlmacenamiento(Integer hashProducto, Integer cantidadProducto, String nroRemito, Empresa empresa) {
+        super(hashProducto, cantidadProducto);
         this.idOrden = autoID++;
         this.nroRemito = nroRemito;
         this.empresa = empresa;
@@ -85,7 +83,7 @@ public class OrdenAlmacenamiento extends Orden implements Comparable<OrdenAlmace
 
     @Override
     public void finalizarOrden(Integer legajoRealizador, Integer posicion){
-        this.setPosicion(posicion);
+        this.setHashPosicion(posicion);
         this.setLegajo(legajoRealizador);
         this.setEstado(EstadoOrden.FINALIZADA);
         this.setFechaRealizacion(LocalDateTime.now());

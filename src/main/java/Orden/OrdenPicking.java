@@ -2,10 +2,8 @@ package Orden;
 
 import Interfaces.Buscable;
 import Interfaces.Filtrable;
-import Productos.Producto;
 import enumeradores.DestinoEcommerce;
 import enumeradores.EstadoOrden;
-import estanteria.Posicion;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -15,24 +13,19 @@ public class OrdenPicking extends Orden implements Comparable<OrdenPicking>, Bus
     private static Integer autoID = 1;
     private final Integer idOrden;
     private String pedido;
-    private final Integer estanteria;
 
-    public OrdenPicking(Producto producto, Integer cantidadProducto, DestinoEcommerce destinoEcommerce, String pedido, Integer estanteria, Integer posicion) {
-        super(producto, cantidadProducto);
+    public OrdenPicking(Integer hashProducto, Integer cantidadProducto, DestinoEcommerce destinoEcommerce, String pedido, Integer posicion) {
+        super(hashProducto, cantidadProducto);
         this.destinoEcommerce = destinoEcommerce;
         this.idOrden = autoID++;
         this.pedido = pedido;
-        this.estanteria = estanteria;
-        super.setPosicion(posicion);
+        super.setHashPosicion(posicion);
     }
 
-    public Integer getEstanteria() {
-        return estanteria;
-    }
 
     @Override
-    public Integer getPosicion() {
-        return super.getPosicion();
+    public Integer getHashPosicion() {
+        return super.getHashPosicion();
     }
 
     public DestinoEcommerce getDestinoEcommerce() {
@@ -95,7 +88,7 @@ public class OrdenPicking extends Orden implements Comparable<OrdenPicking>, Bus
 
     @Override
     public void finalizarOrden(Integer legajoRealizador, Integer posicion){
-        this.setPosicion(posicion);
+        this.setHashPosicion(posicion);
         this.setLegajo(legajoRealizador);
         this.setEstado(EstadoOrden.FINALIZADA);
         this.setFechaRealizacion(LocalDateTime.now());

@@ -98,7 +98,7 @@ public class Posicion implements Buscable<Integer>, Filtrable<Double>,  Comparab
 
     @Override
     public boolean buscar(Integer parametroABuscar) {
-        return this.hashPosicion.equals(parametroABuscar);
+        return this.getHashPosicion().equals(parametroABuscar);
     }
 
     @Override
