@@ -45,6 +45,10 @@ public class GestorCollGen<E extends Buscable<B> & Filtrable <F> & Comparable <E
         elementos.clear();
     }
 
+    public C getElementos() {
+        return elementos;
+    }
+
     public Iterator<E> iterator() {
         return elementos.iterator();
     }

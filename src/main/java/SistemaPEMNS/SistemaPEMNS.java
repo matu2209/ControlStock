@@ -3,6 +3,9 @@ package SistemaPEMNS;
 import Gestor.GestorCollGen;
 
 import Gestor.GestorMapGen;
+import Productos.Accesorios;
+import Productos.Calzado;
+import Productos.Indumentaria;
 import Productos.Producto;
 import Orden.*;
 import enumeradores.DestinoEcommerce;
@@ -10,7 +13,13 @@ import enumeradores.Prioridad;
 import estanteria.Estanteria;
 import estanteria.Posicion;
 import estanteria.ProductoAlmacenado;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.*;
 
 public class SistemaPEMNS {
@@ -25,12 +34,12 @@ public class SistemaPEMNS {
 
 
     public SistemaPEMNS() {
-        this.gestorProductos = new GestorCollGen<>(new TreeSet<>());
+        this.gestorProductos = new GestorCollGen<>(new TreeSet<Producto>());
         this.gestorOrdenesAlmacenamiento = new GestorCollGen<>(new PriorityQueue<OrdenAlmacenamiento>());
         this.gestorOrdenesPicking = new GestorCollGen<>(new PriorityQueue<OrdenPicking>());
-        this.gestorEstanteria = new GestorCollGen<>(new ArrayList<>());
-        this.mapaRelacionalRastreo=new GestorMapGen<>(new TreeMap<>());
-        this.mapaRelacionalAlmacenamiento=new GestorMapGen<>(new TreeMap<>());
+        this.gestorEstanteria = new GestorCollGen<>(new ArrayList<Estanteria>());
+        this.mapaRelacionalRastreo=new GestorMapGen<>(new TreeMap<Producto,Posicion>());
+        this.mapaRelacionalAlmacenamiento=new GestorMapGen<>(new TreeMap<Posicion,ProductoAlmacenado>());
     }
 
     public GestorCollGen<Producto, TreeSet<Producto>, Integer, Prioridad> getGestorProductos() {
@@ -59,20 +68,67 @@ public class SistemaPEMNS {
 
     //HAY QUE MODIFICAR LO DE ABAJO PARA QUE NO TIRE ERROR, AHI ME PONGO A HACERLO
 
-    public boolean generarOrdenPickingDesdePedido (Integer hashProducto, Integer cantidad, String idPedido, DestinoEcommerce destinoEcommerce){
-        List<Posicion> posicionesDelProducto = this.getMapaRelacionalRastreo().buscarPorClaveTodos(hashProducto);
-        Integer cantidadAAlmacenar = cantidad;
-        int posicion = 0;
-        while(cantidadAAlmacenar>0){
-            if(posicionesDelProducto.get(posicion++){
+//    public boolean generarOrdenPickingDesdePedido (Integer hashProducto, Integer cantidad, String idPedido, DestinoEcommerce destinoEcommerce){
+//        List<Posicion> posicionesDelProducto = this.getMapaRelacionalRastreo().buscarPorClaveTodos(hashProducto);
+//        Integer cantidadAAlmacenar = cantidad;
+//        int posicion = 0;
+//        while(cantidadAAlmacenar>0){
+//            if(posicionesDelProducto.get(posicion++){
+//
+//            }
+//            new OrdenPicking(hashProducto, cantidad );
+//        }
+//
+//
+//
+//        return ;
+//    }
 
+    public String guardarProductosExel(){
+        String path = "src/main/resources/calzados.xlsx";
+
+        try (Workbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Libro Productos");
+
+            // Filas del encabezado
+            Row headerRow = sheet.createRow(0);
+            headerRow.createCell(0).setCellValue("Codigo");
+            headerRow.createCell(1).setCellValue("Marca");
+            headerRow.createCell(2).setCellValue("Articulo");
+            headerRow.createCell(3).setCellValue("Talle");
+            headerRow.createCell(4).setCellValue("Stock");
+            headerRow.createCell(5).setCellValue("Volumen");
+            headerRow.createCell(6).setCellValue("Prioridad");
+            headerRow.createCell(7).setCellValue("Empresa");
+            headerRow.createCell(8).setCellValue("Segmento/disciplina");
+
+            int rowNum = 1;
+
+            for (Producto producto : gestorProductos.getElementos()) {
+                Row row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(producto.getHashProducto());
+                row.createCell(1).setCellValue(producto.getMarca());
+                row.createCell(2).setCellValue(producto.getArticulo());
+                row.createCell(3).setCellValue(producto.getTalle());
+                row.createCell(4).setCellValue(producto.getStock());
+                row.createCell(5).setCellValue(producto.getVolumen());
+                row.createCell(6).setCellValue(producto.getPrioridad().toString());
+                row.createCell(7).setCellValue(producto.getEmpresa().toString());
+                if(producto instanceof Accesorios) row.createCell(8).setCellValue(((Accesorios) producto).getDisciplina().toString());
+                if(producto instanceof Calzado) row.createCell(8).setCellValue(((Calzado) producto).getSegmento().toString());
+                if(producto instanceof Indumentaria) row.createCell(8).setCellValue(((Indumentaria) producto).getSegmento().toString());
             }
-            new OrdenPicking(hashProducto, cantidad );
+            for (int i = 0; i < 9; i++) {
+                sheet.autoSizeColumn(i);
+            }
+            try (FileOutputStream fileOut = new FileOutputStream(path)) {
+                workbook.write(fileOut);
+                return "Libro guardado con exito!";
+            }
+
+        } catch (IOException e) {
+            return e.getMessage();
         }
-
-
-
-        return ;
     }
 
 

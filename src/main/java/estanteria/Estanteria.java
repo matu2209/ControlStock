@@ -15,7 +15,7 @@ public abstract class Estanteria implements Buscable<Integer>, Filtrable<Priorid
     private final Empresa empresa;
 
     public Estanteria(Prioridad prioridad, Empresa empresa) {
-        this.listaPosiciones = new GestorCollGen<>(new LinkedList<>());
+        this.listaPosiciones = new GestorCollGen<>(new LinkedList<Posicion>());
         this.prioridad = prioridad;
         this.empresa=empresa;
     }
