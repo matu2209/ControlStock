@@ -14,6 +14,10 @@ public class GestorCollGen<E extends Buscable<B> & Filtrable <F> & Comparable <E
         this.elementos = collection;
     }
 
+    public C getElementos() {
+        return elementos;
+    }
+
     public boolean agregar(E elemento) {
         return elementos.add(elemento);
     }

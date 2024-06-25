@@ -106,11 +106,11 @@ public class Main {
             System.out.println("Producto" + entry.getKey() + " Posicion " + entry.getValue());
         }
 
-        try {
-            sistema.guardarMapaRelacionalRastreo();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            sistema.guardarMapaRelacionalRastreo();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         System.out.println("Hello world!");
     }
 }
