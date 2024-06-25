@@ -1,5 +1,6 @@
 package SistemaPEMNS;
 
+import enumeradores.Empresa;
 import gestores.GestorCollGen;
 
 import gestores.GestorMapGen;
@@ -69,7 +70,7 @@ public class SistemaPEMNS {
         Integer cantidadAPickear = cantidad;
         int indexPosicion = 0;
 
-        while (cantidadAPickear > 0 && indexPosicion < posicionesDelProducto.size()) {
+        while (cantidadAPickear > 0 && indexPosicion < posicionesDelProducto.size()) { //mientras haya que pickear y mientras que el indice de posicion sea menor al tamaño de la lista filtrada de posiciones
             List<ProductoAlmacenado> productosBuscados = this.getMapaRelacionalAlmacenamiento()
                     .buscarPorClaveTodos(posicionesDelProducto.get(indexPosicion).getHashPosicion())
                     .stream()
@@ -92,11 +93,52 @@ public class SistemaPEMNS {
 
         if (cantidadAPickear > 0) {
             // No se pudo completar el picking de todos los productos solicitados
-            // Hay que hacer una excepcion personalizada
+            throw new FaltaDeStockException("No se puede generar la orden de pickeo del producto " + hashProducto + " por falta de stock");
         }
 
-        return cantidad - cantidadAPickear; // Retorna la cantidad que se logró pickear
+        return cantidad - cantidadAPickear; // Retorna la cantidad que se logró asignar para pickear
     }
+
+
+    public int generarOrdenAlmacenamientoDesdeRemito(Integer hashProducto, Integer cantidad, Empresa empresa, String nroRemito) {
+        Producto productoAAlmacenar = getGestorProductos().buscarPrimero(hashProducto); // Busco el objeto producto a almacenar en el gestor de productos para obtener los atributos del mismo
+        int cantidadAAlmacenar = cantidad;
+        int indexPosicion = 0;
+
+        // Filtra la lista de posiciones por aquellas que tienen un volumen disponible mayor o igual al del producto que va a almacenar
+        // y luego las vuelve a filtrar por aquellas que matchean por la prioridad de nuestro producto
+        List<Posicion> posicionesLibres = this.getMapaRelacionalAlmacenamiento()
+                .filtrarClaves(productoAAlmacenar.getVolumen())
+                .stream()
+                .filter(element -> element.filtrarPorPrioridad(productoAAlmacenar.getPrioridad()))
+                .toList();
+
+        while (cantidadAAlmacenar > 0 && indexPosicion < posicionesLibres.size()) {
+            Posicion posicion = posicionesLibres.get(indexPosicion);
+            double volumenRequerido = productoAAlmacenar.getVolumen() * cantidadAAlmacenar;
+
+            if (volumenRequerido <= posicion.getVolumenDisponible()) {
+                getGestorOrdenesAlmacenamiento().agregar(new OrdenAlmacenamiento(hashProducto, cantidadAAlmacenar, nroRemito, empresa, posicion.getHashPosicion()));
+                cantidadAAlmacenar = 0; //El producto fue almacenado por completo
+                break;
+            } else {
+                int cantidadPorPosicion = (int) Math.floor(posicion.getVolumenDisponible() / productoAAlmacenar.getVolumen());
+                getGestorOrdenesAlmacenamiento().agregar(new OrdenAlmacenamiento(hashProducto, cantidadPorPosicion, nroRemito, empresa, posicion.getHashPosicion()));
+                cantidadAAlmacenar -= cantidadPorPosicion;
+            }
+
+            indexPosicion++;
+        }
+
+        if (cantidadAAlmacenar > 0) {
+            //si no se pudo almacenar todo el producto, lanzo una excepcion
+            throw new FaltaDeEspacioException("No se puede almacenar el producto " + hashProducto +  " por falta de espacio en la estanteria");
+        }
+
+        return cantidad - cantidadAAlmacenar; // Retorna la cantidad que se logró asignar para almacenar
+    }
+
+
 
     //public boolean generarOrdenPicking(Integer hashProducto, int cantidad, String idPedido, DestinoEcommerce ecommerce) {
     //        //buscar el producto

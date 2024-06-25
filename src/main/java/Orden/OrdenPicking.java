@@ -14,19 +14,13 @@ public class OrdenPicking extends Orden implements Comparable<OrdenPicking>, Bus
     private final Integer idOrden;
     private String pedido;
 
-    public OrdenPicking(Integer hashProducto, Integer cantidadProducto, DestinoEcommerce destinoEcommerce, String pedido, Integer posicion) {
-        super(hashProducto, cantidadProducto);
+    public OrdenPicking(Integer hashProducto, Integer cantidadProducto, DestinoEcommerce destinoEcommerce, String pedido, Integer hashPosicion) {
+        super(hashProducto, cantidadProducto, hashPosicion);
         this.destinoEcommerce = destinoEcommerce;
         this.idOrden = autoID++;
         this.pedido = pedido;
-        super.setHashPosicion(posicion);
     }
 
-
-    @Override
-    public Integer getHashPosicion() {
-        return super.getHashPosicion();
-    }
 
     public DestinoEcommerce getDestinoEcommerce() {
         return destinoEcommerce;

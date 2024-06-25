@@ -25,10 +25,10 @@ public abstract class Orden {
     private Integer legajo;              //Legajo del colaborador que realiza la orden
     private EstadoOrden estado;
 
-    public Orden(Integer hashProducto, Integer cantidadProducto ) { //la orden se crea siempre EN_PROCESO
+    public Orden(Integer hashProducto, Integer cantidadProducto, Integer hashPosicion) { //la orden se crea siempre EN_PROCESO
         this.hashProducto = hashProducto;
         this.cantidadProducto = cantidadProducto;
-        this.hashPosicion =null;
+        this.hashPosicion =hashPosicion;
         this.fechaCreacion = LocalDateTime.now();
         this.estado = EstadoOrden.EN_PROCESO;
     }

@@ -14,8 +14,8 @@ public class OrdenAlmacenamiento extends Orden implements Comparable<OrdenAlmace
     private String nroRemito;
     private Empresa empresa;
 
-    public OrdenAlmacenamiento(Integer hashProducto, Integer cantidadProducto, String nroRemito, Empresa empresa) {
-        super(hashProducto, cantidadProducto);
+    public OrdenAlmacenamiento(Integer hashProducto, Integer cantidadProducto, String nroRemito, Empresa empresa, Integer hashPosicion) {
+        super(hashProducto, cantidadProducto, hashPosicion);
         this.idOrden = autoID++;
         this.nroRemito = nroRemito;
         this.empresa = empresa;

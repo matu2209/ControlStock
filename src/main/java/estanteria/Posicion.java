@@ -102,8 +102,12 @@ public class Posicion implements Buscable<Integer>, Filtrable<Double>,  Comparab
     }
 
     @Override
-    public boolean filter(Double parametroFiltrado){ //SI EL VOLUMEN DISPONIBLE ES MAYOR O IGUAL AL VOLUMEN DEL PARAMETRO, RETORNA TRUE
-        return this.getVolumenDisponible() >= parametroFiltrado;
+    public boolean filter(Double parametroFiltrado){ //SI EL VOLUMEN DISPONIBLE ES MAYOR AL VOLUMEN DEL PARAMETRO, RETORNA TRUE
+        return this.getVolumenDisponible() > parametroFiltrado;
+    }
+
+    public boolean filtrarPorPrioridad (Prioridad prioridad){
+        return this.getPrioridad().equals(prioridad);
     }
 
     @Override
