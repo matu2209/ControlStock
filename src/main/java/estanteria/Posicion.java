@@ -90,6 +90,10 @@ public class Posicion implements Buscable<Integer>, Filtrable<Double>,  Comparab
         this.disponibilidad = disponibilidad;
     }
 
+    public boolean filtrarPorPrioridad (Prioridad prioridad){
+        return this.getPrioridad().equals(prioridad);
+    }
+
     @Override
     public int compareTo(Posicion posicionAComparar) {
         return getHashPosicion().compareTo(posicionAComparar.getHashPosicion());

@@ -4,13 +4,14 @@ import Interfaces.Buscable;
 import Interfaces.Filtrable;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-
-public class GestorMapGen<K extends Buscable<B> & Filtrable<F> & Comparable <K>, B, F,  V extends Buscable<C> & Filtrable<G> & Comparable <V>, C, G, M extends Map<K, V>> {
+public class GestorMapGen<K extends Buscable<B> & Filtrable<F> & Comparable<K>, B, F, V extends Buscable<C> & Filtrable<G> & Comparable<V>, C, G, M extends Map<K, LinkedList<V>>> {
 
     private final M mapa;
 
@@ -18,11 +19,11 @@ public class GestorMapGen<K extends Buscable<B> & Filtrable<F> & Comparable <K>,
         this.mapa = mapa;
     }
 
-    public V agregar(K clave, V valor) {
-        return mapa.put(clave, valor);
+    public void agregar(K clave, V valor) {
+        mapa.computeIfAbsent(clave, k -> new LinkedList<>()).add(valor);
     }
 
-    public V eliminar(K clave) {
+    public LinkedList<V> eliminar(K clave) {
         return mapa.remove(clave);
     }
 
@@ -35,48 +36,65 @@ public class GestorMapGen<K extends Buscable<B> & Filtrable<F> & Comparable <K>,
     }
 
     public boolean contieneValor(V valor) {
-        return mapa.containsValue(valor);
+        return mapa.values().stream()
+                .anyMatch(lista -> lista.contains(valor));
     }
 
-    public V buscarPorClavePrimero(B criterioBusqueda) {
+    public V buscarPorClavePrimerValor(B criterioBusqueda) {  //devuelve el primer valor que matchee con el criterio de búsqueda de la clave
         return mapa.keySet().stream()
                 .filter(clave -> clave.buscar(criterioBusqueda))
                 .findFirst()
                 .map(mapa::get)
+                .map(lista -> lista.isEmpty() ? null : lista.getFirst())
                 .orElse(null);
     }
 
-    public K buscarPorValorPrimero(C criterioBusqueda) {
+    public List<V> devolverListaValoresDeKeyBuscada(B criterioBusqueda) {
+        return mapa.keySet().stream()
+                .filter(clave -> clave.buscar(criterioBusqueda))
+                .findFirst()
+                .map(mapa::get)
+                .orElseGet(LinkedList::new);
+    }
+
+
+    public List<V> devolverListaValoresDeKeyBuscadaFiltrada(B criterioBusquedaClave, C criterioBusquedaValor) {
+        return mapa.keySet().stream()
+                .filter(clave -> clave.buscar(criterioBusquedaClave))
+                .findFirst()
+                .map(clave -> mapa.get(clave)
+                        .stream()
+                        .filter(valor -> valor.buscar(criterioBusquedaValor)))
+                .orElseGet(Stream::empty)
+                .collect(Collectors.toList());
+    }
+
+    public K buscarPorValorPrimerClave(C criterioBusqueda) {  //devuelve la primero que matchee con el criterio de busqueda
         return mapa.entrySet().stream()
-                .filter(entry -> entry.getValue().buscar(criterioBusqueda))
+                .filter(entry -> entry.getValue().stream().anyMatch(valor -> valor.buscar(criterioBusqueda)))
                 .map(Map.Entry::getKey)
                 .findFirst()
                 .orElse(null);
     }
 
-    // Método para buscar valores cuyas claves cumplen con el criterio de búsqueda
-    public List<V> buscarPorClaveTodos(B criterioBusqueda) {
+
+    public List<V> buscarPorClaveTodosValores(B criterioBusqueda) { //DEVUELVE UNA LISTA DE TODAS LAS LISTAS DE VALORES DE LAS CLAVES QUE CUMPLEN CON EL CRITERIO DE BUSQUEDA DE LA CLAVE
         return mapa.keySet().stream()
                 .filter(clave -> clave.buscar(criterioBusqueda))
-                .map(mapa::get)
+                .flatMap(clave -> mapa.get(clave).stream())
                 .collect(Collectors.toList());
     }
 
-    public List<K> buscarPorValorTodos(C criterioBusqueda) {
-        return mapa.entrySet().stream()
-                .filter(entry -> entry.getValue().buscar(criterioBusqueda))
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
-    }
 
-    public Set<K> filtrarClaves(F criterioFiltrado) {
+    public List<K> filtrarClaves(F criterioFiltrado) {
         return mapa.keySet().stream()
                 .filter(clave -> clave.filter(criterioFiltrado))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
     public Collection<V> filtrarValores(G criterioFiltrado) {
         return mapa.values().stream()
+                .flatMap(Collection::stream)
                 .filter(valor -> valor.filter(criterioFiltrado))
                 .collect(Collectors.toList());
     }
@@ -89,11 +107,11 @@ public class GestorMapGen<K extends Buscable<B> & Filtrable<F> & Comparable <K>,
         return mapa.keySet();
     }
 
-    public Collection<V> valores() {
+    public Collection<LinkedList<V>> valores() {
         return mapa.values();
     }
 
-    public Set<Map.Entry<K, V>> entradas() {
+    public Set<Map.Entry<K, LinkedList<V>>> entradas() {
         return mapa.entrySet();
     }
 

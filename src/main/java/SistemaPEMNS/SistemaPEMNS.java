@@ -31,9 +31,9 @@ public class SistemaPEMNS {
 
     //GESTORES RELACIONALES DE BÚSQUEDA DE NUESTRO SISTEMA
 
-    private final GestorMapGen<Producto, Integer, Prioridad, Posicion, Integer, Double, Map<Producto, Posicion>> mapaRelacionalRastreo; //es quien va a llevar la relacion entre un producto y las ubicaciones donde se encuentra almacenado
+    private final GestorMapGen<Producto, Integer, Prioridad, Posicion, Integer, Double, Map<Producto, LinkedList<Posicion>>> mapaRelacionalRastreo; //es quien va a llevar la relacion entre un producto y las ubicaciones donde se encuentra almacenado
     // totalmente necesario para las operaciones de busqueda tanto para almacenamiento como para pickeo
-    private final GestorMapGen<Posicion, Integer, Double, ProductoAlmacenado, Integer, Integer, Map<Posicion, ProductoAlmacenado>>mapaRelacionalAlmacenamiento;
+    private final GestorMapGen<Posicion, Integer, Double, ProductoAlmacenado, Integer, Integer, Map<Posicion, LinkedList <ProductoAlmacenado>>>mapaRelacionalAlmacenamiento;
 
 
     public SistemaPEMNS() {
@@ -49,9 +49,6 @@ public class SistemaPEMNS {
         return gestorProductos;
     }
 
-    public GestorMapGen<Producto, Integer, Prioridad, Posicion, Integer, Double, Map<Producto, Posicion>> getMapaRelacionalRastreo() {
-        return mapaRelacionalRastreo;
-    }
 
     public GestorCollGen<Estanteria, ArrayList<Estanteria>, Integer, Prioridad> getGestorEstanteria() {
         return gestorEstanteria;
@@ -65,22 +62,22 @@ public class SistemaPEMNS {
         return gestorOrdenesAlmacenamiento;
     }
 
-    public GestorMapGen<Posicion, Integer, Double, ProductoAlmacenado, Integer, Integer, Map<Posicion, ProductoAlmacenado>> getMapaRelacionalAlmacenamiento() {
+    public GestorMapGen<Producto, Integer, Prioridad, Posicion, Integer, Double, Map<Producto, LinkedList<Posicion>>> getMapaRelacionalRastreo() {
+        return mapaRelacionalRastreo;
+    }
+
+    public GestorMapGen<Posicion, Integer, Double, ProductoAlmacenado, Integer, Integer, Map<Posicion, LinkedList<ProductoAlmacenado>>> getMapaRelacionalAlmacenamiento() {
         return mapaRelacionalAlmacenamiento;
     }
 
-
     public int generarOrdenPickingDesdePedido (Integer hashProducto, Integer cantidad, DestinoEcommerce destinoEcommerce, String idPedido) {
-        List<Posicion> posicionesDelProducto = this.getMapaRelacionalRastreo().buscarPorClaveTodos(hashProducto); // Obtengo la lista de posiciones en que se almacena un producto
+        List<Posicion> posicionesDelProducto = this.getMapaRelacionalRastreo().devolverListaValoresDeKeyBuscada(hashProducto); // Obtengo la lista de posiciones en que se almacena un producto
         Integer cantidadAPickear = cantidad;
         int indexPosicion = 0;
 
         while (cantidadAPickear > 0 && indexPosicion < posicionesDelProducto.size()) { //mientras haya que pickear y mientras que el indice de posicion sea menor al tamaño de la lista filtrada de posiciones
-            List<ProductoAlmacenado> productosBuscados = this.getMapaRelacionalAlmacenamiento()
-                    .buscarPorClaveTodos(posicionesDelProducto.get(indexPosicion).getHashPosicion())
-                    .stream()
-                    .filter(elemento -> elemento.getProductoAlmacenado().getHashProducto().equals(hashProducto))
-                    .toList(); // Obtengo la lista de productos almacenados en una posición y los filtro por el hash del producto que necesito
+            List<ProductoAlmacenado> productosBuscados = this.getMapaRelacionalAlmacenamiento().devolverListaValoresDeKeyBuscadaFiltrada(posicionesDelProducto.get(indexPosicion).getHashPosicion(),hashProducto);
+
 
             for (ProductoAlmacenado productoAlmacenado : productosBuscados) {
                 if (productoAlmacenado.getStockDePosicion() >= cantidadAPickear) {
@@ -143,6 +140,22 @@ public class SistemaPEMNS {
         return cantidad - cantidadAAlmacenar; // Retorna la cantidad que se logró asignar para almacenar
     }
 
+
+    public boolean confirmarOrdenPicking (){
+        return true;
+    }
+
+    public boolean cancelarOrdenPicking(){
+        return true;
+    }
+
+    public boolean confirmarOrdenAlmacenamiento(){
+        return true;
+    }
+
+    public boolean cancelarOrdenAlmacenamiento() {
+        return true;
+    }
 
 
     //HAY QUE MODIFICAR LO DE ABAJO PARA QUE NO TIRE ERROR, AHI ME PONGO A HACERLO

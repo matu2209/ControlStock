@@ -7,7 +7,7 @@ import estanteria.Posicion;
 
 import java.util.Objects;
 
-public class ProductoAlmacenado implements Buscable<Integer>, Filtrable<Integer>, Comparable<ProductoAlmacenado> {
+public class ProductoAlmacenado implements Buscable<Integer>, Filtrable<Integer>, Comparable<ProductoAlmacenado> { //SE FILTRA Y SE COMPARA POR EL HASH Producto productoAlmacenado YA QUE EN SI ES EL MISMO PERO DISTRIBUIDO EN DIFERENTES LUGARES
     private static Integer autoId=0;
     private final Integer idProductoAlmacenado;
     private Producto productoAlmacenado;
@@ -92,7 +92,7 @@ public class ProductoAlmacenado implements Buscable<Integer>, Filtrable<Integer>
 
     @Override
     public boolean buscar(Integer parametroABuscar) {
-        return this.getIdProductoAlmacenado().equals(parametroABuscar);
+        return this.getProductoAlmacenado().getHashProducto().equals(parametroABuscar);
     }
 
     @Override
