@@ -1,6 +1,10 @@
 package SistemaPEMNS;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import enumeradores.*;
+import excepciones.FaltaDeEspacioException;
+import excepciones.FaltaDeStockException;
 import gestores.GestorCollGen;
 
 import gestores.GestorMapGen;
@@ -37,12 +41,12 @@ public class SistemaPEMNS {
 
 
     public SistemaPEMNS() {
-        this.gestorProductos = new GestorCollGen<>(new TreeSet<>());
+        this.gestorProductos = new GestorCollGen<>(new TreeSet<Producto>());
         this.gestorOrdenesAlmacenamiento = new GestorCollGen<>(new PriorityQueue<OrdenAlmacenamiento>());
         this.gestorOrdenesPicking = new GestorCollGen<>(new PriorityQueue<OrdenPicking>());
-        this.gestorEstanteria = new GestorCollGen<>(new ArrayList<>());
-        this.mapaRelacionalRastreo=new GestorMapGen<>(new TreeMap<>());
-        this.mapaRelacionalAlmacenamiento=new GestorMapGen<>(new TreeMap<>());
+        this.gestorEstanteria = new GestorCollGen<>(new ArrayList<Estanteria>());
+        this.mapaRelacionalRastreo=new GestorMapGen<>(new TreeMap<Producto,LinkedList<Posicion>>());
+        this.mapaRelacionalAlmacenamiento=new GestorMapGen<>(new TreeMap<Posicion,LinkedList<ProductoAlmacenado>>());
     }
 
     public GestorCollGen<Producto, TreeSet<Producto>, Integer, Prioridad> getGestorProductos() {
@@ -70,7 +74,7 @@ public class SistemaPEMNS {
         return mapaRelacionalAlmacenamiento;
     }
 
-    public int generarOrdenPickingDesdePedido (Integer hashProducto, Integer cantidad, DestinoEcommerce destinoEcommerce, String idPedido) {
+    public int generarOrdenPickingDesdePedido (Integer hashProducto, Integer cantidad, DestinoEcommerce destinoEcommerce, String idPedido) throws FaltaDeStockException {
         List<Posicion> posicionesDelProducto = this.getMapaRelacionalRastreo().devolverListaValoresDeKeyBuscada(hashProducto); // Obtengo la lista de posiciones en que se almacena un producto
         Integer cantidadAPickear = cantidad;
         int indexPosicion = 0;
@@ -95,14 +99,14 @@ public class SistemaPEMNS {
 
         if (cantidadAPickear > 0) {
             // No se pudo completar el picking de todos los productos solicitados
-            throw new FaltaDeStockException("No se puede generar la orden de pickeo del producto " + hashProducto + " por falta de stock");
+            throw new FaltaDeStockException(hashProducto);
         }
 
         return cantidad - cantidadAPickear; // Retorna la cantidad que se logró asignar para pickear
     }
 
 
-    public int generarOrdenAlmacenamientoDesdeRemito(Integer hashProducto, Integer cantidad, Empresa empresa, String nroRemito) {
+    public int generarOrdenAlmacenamientoDesdeRemito(Integer hashProducto, Integer cantidad, Empresa empresa, String nroRemito) throws FaltaDeEspacioException {
         Producto productoAAlmacenar = getGestorProductos().buscarPrimero(hashProducto); // Busco el objeto producto a almacenar en el gestor de productos para obtener los atributos del mismo
         int cantidadAAlmacenar = cantidad;
         int indexPosicion = 0;
@@ -310,6 +314,21 @@ public class SistemaPEMNS {
             workbook.close();
             return "bien capo";
         } catch (Exception e) {
+            return e.getMessage();
+        }
+    }
+
+    public String guardarMapaRelacionalRastreo() throws IOException {
+        String path = "src/main/resources/maparastreo.json";
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String json = gson.toJson(mapaRelacionalRastreo.getMapa());
+        System.out.println(json);
+        try (FileWriter writer = new FileWriter(path)) {
+            writer.write(json);
+            writer.flush();
+            writer.close();
+            return "mapa guardado";
+        } catch (IOException e){
             return e.getMessage();
         }
     }

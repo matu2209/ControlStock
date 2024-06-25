@@ -21,8 +21,8 @@ public class Accesorios extends Producto{
         this.disciplina = disciplina;
     }
 
-    public Disciplina getDisciplina() {
-        return disciplina;
+    public String getDisciplina() {
+        return disciplina.toString();
     }
 
     @Override
@@ -41,8 +41,7 @@ public class Accesorios extends Producto{
 
     @Override
     public String toString() {
-        return super.toString()+ "Accesorios{" +
-                "disciplina=" + disciplina +
-                '}';
+        return super.toString()+
+                ", disciplina:" + disciplina+'}';
     }
 }

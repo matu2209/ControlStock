@@ -20,8 +20,8 @@ public class Indumentaria extends Producto{
         this.segmento = segmento;
     }
 
-    public Segmento getSegmento() {
-        return segmento;
+    public String getSegmento() {
+        return segmento.toString();
     }
 
     @Override
@@ -40,8 +40,7 @@ public class Indumentaria extends Producto{
 
     @Override
     public String toString() {
-        return super.toString() + "Indumentaria{" +
-                "segmento=" + segmento +
-                '}';
+        return super.toString()+
+                ", segmento=" + segmento+'}';
     }
 }

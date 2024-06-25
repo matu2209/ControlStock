@@ -97,20 +97,18 @@ public class Main {
         sistema.getGestorEstanteria().agregar(e1);
         sistema.getGestorEstanteria().agregar(e2);
         sistema.getMapaRelacionalRastreo().agregar(n1,sistema.getGestorEstanteria().getElementos().get(1).getListaPosiciones().getElementos().get(1));
+        sistema.getMapaRelacionalRastreo().agregar(n1,sistema.getGestorEstanteria().getElementos().get(1).getListaPosiciones().getElementos().get(4));
         sistema.getMapaRelacionalRastreo().agregar(n2,sistema.getGestorEstanteria().getElementos().get(1).getListaPosiciones().getElementos().get(2));
         sistema.getMapaRelacionalRastreo().agregar(n3,sistema.getGestorEstanteria().getElementos().get(1).getListaPosiciones().getElementos().get(3));
         sistema.getMapaRelacionalRastreo().agregar(n4,sistema.getGestorEstanteria().getElementos().get(1).getListaPosiciones().getElementos().get(4));
 //        System.out.println(sistema.getMapaRelacionalRastreo().valores());
 
-        for (Map.Entry<Producto, Posicion> entry : sistema.getMapaRelacionalRastreo().entradas()) {
-            System.out.println("Producto" + entry.getKey() + " Posicion " + entry.getValue());
-        }
 
-//        try {
-//            sistema.guardarMapaRelacionalRastreo();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        try {
+            sistema.guardarMapaRelacionalRastreo();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         System.out.println("Hello world!");
     }
 }
