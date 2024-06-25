@@ -1,5 +1,6 @@
 package SistemaPEMNS;
 
+import enumeradores.*;
 import gestores.GestorCollGen;
 
 import gestores.GestorMapGen;
@@ -8,19 +9,17 @@ import Productos.Calzado;
 import Productos.Indumentaria;
 import Productos.Producto;
 import Orden.*;
-import enumeradores.DestinoEcommerce;
-import enumeradores.Empresa;
-import enumeradores.Prioridad;
 import estanteria.Estanteria;
 import estanteria.Posicion;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import productoAlmacenado.ProductoAlmacenado;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 public class SistemaPEMNS {
@@ -207,6 +206,97 @@ public class SistemaPEMNS {
             }
 
         } catch (IOException e) {
+            return e.getMessage();
+        }
+    }
+
+    public String leerProductosExel() {
+        String path = "src/main/resources/productos.xlsx";
+        File archivo = new File(path);
+
+        try {
+
+            InputStream input = new FileInputStream(archivo);
+            XSSFWorkbook workbook = new XSSFWorkbook(input);
+            XSSFSheet sheet = workbook.getSheetAt(0);
+
+
+            Iterator<Row> filas = sheet.rowIterator();
+            Iterator<Cell> columnas = null;
+            Integer hashProducto = 0, talle = 0, stock = 0;
+            Double volumen = 0.0;
+            Prioridad prioridad = null;
+            Empresa empresa = null;
+            String marca = "", articulo = "";
+            Segmento segmento;
+            Disciplina disciplina = null;
+
+            Row filaActual = null;
+            Cell columnaActual = null;
+            filas.next();
+            while (filas.hasNext()) {
+                filaActual = filas.next();
+                columnas = filaActual.cellIterator();
+                Iterator<Cell> encabezado = sheet.getRow(0).cellIterator();
+                Cell columnaEncabezado = null;
+
+                while (columnas.hasNext()) {
+                    columnaActual = columnas.next();
+                    columnaEncabezado = encabezado.next();
+
+                    //aca uso encabezado para ver donde estoy parado
+                    //las filas corresponden
+//                    if (columnaEncabezado.getCellType() == CellType.NUMERIC) {
+//                        //hashProducto = (int) cell.getNumericCellValue();
+//                        System.out.println(columnaEncabezado.getNumericCellValue());
+//                    }
+//                    if (columnaEncabezado.getCellType() == CellType.STRING) {
+//                        System.out.println(columnaEncabezado.getStringCellValue());
+//                    }
+                    if (columnaEncabezado.getStringCellValue().equals("Codigo")) {
+                        hashProducto = (int) columnaActual.getNumericCellValue();
+                    }
+                    if (columnaEncabezado.getStringCellValue().equals("Marca")) {
+                        marca = columnaActual.getStringCellValue();
+                    }
+                    if (columnaEncabezado.getStringCellValue().equals("Articulo")) {
+                        articulo = columnaActual.getStringCellValue();
+                    }
+                    if (columnaEncabezado.getStringCellValue().equals("Talle")) {
+                        talle = (int) columnaActual.getNumericCellValue();
+                    }
+                    if (columnaEncabezado.getStringCellValue().equals("Stock")) {
+                        stock = (int) columnaActual.getNumericCellValue();
+                    }
+                    if (columnaEncabezado.getStringCellValue().equals("Volumen")) {
+                        volumen = columnaActual.getNumericCellValue();
+                    }
+                    if (columnaEncabezado.getStringCellValue().equals("Prioridad")) {
+                        prioridad = Prioridad.valueOf(columnaActual.getStringCellValue());
+                    }
+                    if (columnaEncabezado.getStringCellValue().equals("Empresa")) {
+                        empresa = Empresa.valueOf(columnaActual.getStringCellValue());
+                    }
+                    if (columnaEncabezado.getStringCellValue().equals("Segmento/disciplina")) {
+                        if ((columnaActual.getStringCellValue()).equals("ADULTOS") || (columnaActual.getStringCellValue()).equals("NINIOS")) {
+                            segmento = Segmento.valueOf(columnaActual.getStringCellValue());
+                            if (talle > 25) {
+                                gestorProductos.agregar(new Calzado(hashProducto, marca, articulo, talle, stock, volumen, prioridad, segmento, empresa));
+                            } else {
+                                gestorProductos.agregar(new Indumentaria(hashProducto, marca, articulo, talle, stock, volumen, prioridad, segmento, empresa));
+                            }
+                        } else {
+                            disciplina = Disciplina.valueOf(columnaActual.getStringCellValue());
+                            gestorProductos.agregar(new Accesorios(hashProducto, marca, articulo, talle, stock, volumen, prioridad, disciplina, empresa));
+                        }
+                    }
+                }
+
+            }
+            input.close();
+            workbook.close();
+            return "bien capo";
+        } catch (Exception e) {
             return e.getMessage();
         }
     }
