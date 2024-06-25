@@ -139,6 +139,19 @@ public class SistemaPEMNS {
     }
 
 
+    public boolean confirmarOrdenPicking{
+
+    }
+
+    public boolean confirmarOrdenAlmacenamiento{
+
+    }
+
+    public boolean cancelarOrdenAlmacenamiento(){
+
+    }
+
+    public boolean confirma
 
     //public boolean generarOrdenPicking(Integer hashProducto, int cantidad, String idPedido, DestinoEcommerce ecommerce) {
     //        //buscar el producto
