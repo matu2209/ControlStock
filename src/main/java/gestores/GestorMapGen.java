@@ -3,13 +3,8 @@ package gestores;
 import Interfaces.Buscable;
 import Interfaces.Filtrable;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class GestorMapGen<K extends Buscable<B> & Filtrable<F> & Comparable<K>, B, F, V extends Buscable<C> & Filtrable<G> & Comparable<V>, C, G, M extends Map<K, LinkedList<V>>> {
 
@@ -58,15 +53,15 @@ public class GestorMapGen<K extends Buscable<B> & Filtrable<F> & Comparable<K>, 
     }
 
 
-    public List<V> devolverListaValoresDeKeyBuscadaFiltrada(B criterioBusquedaClave, C criterioBusquedaValor) {
+    public List<V> devolverListaValoresDeKeyBuscadaFiltrada(B criterioBusquedaClave, G parametroFiltradoValor) {
         return mapa.keySet().stream()
                 .filter(clave -> clave.buscar(criterioBusquedaClave))
                 .findFirst()
                 .map(clave -> mapa.get(clave)
                         .stream()
-                        .filter(valor -> valor.buscar(criterioBusquedaValor)))
-                .orElseGet(Stream::empty)
-                .collect(Collectors.toList());
+                        .filter(valor -> valor.filter(parametroFiltradoValor))
+                        .collect(Collectors.toList())) // Recolecta los valores filtrados en una lista
+                .orElse(Collections.emptyList()); // En caso de que no encuentre la clave, retorna una lista vacía
     }
 
     public K buscarPorValorPrimerClave(C criterioBusqueda) {  //devuelve la primero que matchee con el criterio de busqueda
