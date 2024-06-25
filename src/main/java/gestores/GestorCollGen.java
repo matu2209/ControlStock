@@ -1,4 +1,4 @@
-package Gestor;
+package gestores;
 
 import Interfaces.Buscable;
 import Interfaces.Filtrable;
@@ -41,12 +41,9 @@ public class GestorCollGen<E extends Buscable<B> & Filtrable <F> & Comparable <E
     public List<E> filtrar(F criterioBusqueda) {
         return elementos.stream().filter(elemento -> elemento.filter(criterioBusqueda)).toList();
     }
+
     public void limpiar() {
         elementos.clear();
-    }
-
-    public C getElementos() {
-        return elementos;
     }
 
     public Iterator<E> iterator() {
@@ -60,4 +57,3 @@ public class GestorCollGen<E extends Buscable<B> & Filtrable <F> & Comparable <E
                 '}';
     }
 }
-

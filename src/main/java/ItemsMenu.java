@@ -1,13 +1,9 @@
-import Gestor.GestorCollGen;
-import Productos.Producto;
 import SistemaPEMNS.SistemaPEMNS;
 import enumeradores.Empresa;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-
 
 
 public class ItemsMenu extends JFrame {
