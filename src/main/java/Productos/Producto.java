@@ -29,6 +29,17 @@ public abstract class Producto implements Comparable<Producto>, Buscable <Intege
         this.empresa = empresa; 
     }
 
+    public Producto(Integer hashProducto, String marca, String articulo, Integer talle, Integer stock, Double volumen, Prioridad prioridad, Empresa empresa) {
+        this.hashProducto = hashProducto;
+        this.marca = marca;
+        this.articulo = articulo;
+        this.talle = talle;
+        this.stock = stock;
+        this.volumen = volumen;
+        this.prioridad = prioridad;
+        this.empresa = empresa;
+    }
+
     public Integer getHashProducto() {
         return hashProducto;
     }
@@ -125,10 +136,10 @@ public abstract class Producto implements Comparable<Producto>, Buscable <Intege
     @Override
     public String toString() {
         return "Producto{" +
-                "hashProducto=" + hashProducto +
-                ", marca='" + marca + '\'' +
-                ", articulo='" + articulo + '\'' +
-                ", talle=" + talle +
+                "hashProducto: " + hashProducto +
+                ", marca: " + marca  +
+                ", articulo: " + articulo +
+                ", talle: " + talle +
                 ", stock=" + stock +
                 ", volumen=" + volumen +
                 ", prioridad=" + prioridad +

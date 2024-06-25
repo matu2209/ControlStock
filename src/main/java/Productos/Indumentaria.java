@@ -15,6 +15,11 @@ public class Indumentaria extends Producto{
         this.segmento = segmento;
     }
 
+    public Indumentaria(Integer hashProducto,String marca, String articulo, Integer talle, Integer stock, Double volumen, Prioridad prioridad, Segmento segmento, Empresa empresa) {
+        super(hashProducto, marca, articulo, talle, stock, volumen, prioridad, empresa);
+        this.segmento = segmento;
+    }
+
     public Segmento getSegmento() {
         return segmento;
     }
@@ -35,7 +40,7 @@ public class Indumentaria extends Producto{
 
     @Override
     public String toString() {
-        return "Indumentaria{" +
+        return super.toString() + "Indumentaria{" +
                 "segmento=" + segmento +
                 '}';
     }
