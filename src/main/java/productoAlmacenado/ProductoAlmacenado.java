@@ -1,28 +1,31 @@
-package estanteria;
+package productoAlmacenado;
 
 import Interfaces.Buscable;
 import Interfaces.Filtrable;
 import Productos.Producto;
+import estanteria.Posicion;
 
 import java.util.Objects;
 
-public class ProductoAlmacenado implements Buscable<Integer>, Filtrable<Producto>, Comparable<ProductoAlmacenado> {
+public class ProductoAlmacenado implements Buscable<Integer>, Filtrable<Integer>, Comparable<ProductoAlmacenado> {
     private static Integer autoId=0;
-    private final Integer idProducto;
+    private final Integer idProductoAlmacenado;
     private Producto productoAlmacenado;
+    private Posicion posicionDeAlmacenado;
     private Integer stockDePosicion;//STOCK QUE ALMACENO EN UNA POSICION
     private Double volumenAlmacenado;
 
-    public ProductoAlmacenado(Producto productoAlmacenado, Integer stockDePosicion) {
-        this.idProducto = autoId++;
+    public ProductoAlmacenado(Producto productoAlmacenado,Posicion posicionDeAlmacenado, Integer stockDePosicion) {
+        this.idProductoAlmacenado = autoId++;
         this.productoAlmacenado = productoAlmacenado;
+        this.posicionDeAlmacenado = posicionDeAlmacenado;
         this.stockDePosicion = stockDePosicion;
         this.volumenAlmacenado = productoAlmacenado.getVolumen()*stockDePosicion;
     }
 
 
-    public Integer getIdProducto() {
-        return idProducto;
+    public Integer getIdProductoAlmacenado() {
+        return idProductoAlmacenado;
     }
 
     public Producto getProductoAlmacenado() {
@@ -31,6 +34,14 @@ public class ProductoAlmacenado implements Buscable<Integer>, Filtrable<Producto
 
     public void setProductoAlmacenado(Producto productoAlmacenado) {
         this.productoAlmacenado = productoAlmacenado;
+    }
+
+    public Posicion getPosicionDeAlmacenado() {
+        return posicionDeAlmacenado;
+    }
+
+    public void setPosicionDeAlmacenado(Posicion posicionDeAlmacenado) {
+        this.posicionDeAlmacenado = posicionDeAlmacenado;
     }
 
     public Integer getStockDePosicion() {
@@ -49,44 +60,44 @@ public class ProductoAlmacenado implements Buscable<Integer>, Filtrable<Producto
         this.volumenAlmacenado = volumenAlmacenado;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ProductoAlmacenado that = (ProductoAlmacenado) o;
-        return Objects.equals(getIdProducto(), that.getIdProducto()) && Objects.equals(getProductoAlmacenado(), that.getProductoAlmacenado()) && Objects.equals(getStockDePosicion(), that.getStockDePosicion()) && Objects.equals(getVolumenAlmacenado(), that.getVolumenAlmacenado());
+        return Objects.equals(getIdProductoAlmacenado(), that.getIdProductoAlmacenado()) && Objects.equals(getProductoAlmacenado(), that.getProductoAlmacenado()) && Objects.equals(getPosicionDeAlmacenado(), that.getPosicionDeAlmacenado()) && Objects.equals(getStockDePosicion(), that.getStockDePosicion()) && Objects.equals(getVolumenAlmacenado(), that.getVolumenAlmacenado());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getIdProducto(), getProductoAlmacenado(), getStockDePosicion(), getVolumenAlmacenado());
+        return Objects.hash(getIdProductoAlmacenado(), getProductoAlmacenado(), getPosicionDeAlmacenado(), getStockDePosicion(), getVolumenAlmacenado());
     }
 
     @Override
     public String toString() {
         return "ProductoAlmacenado{" +
-                "idProducto=" + idProducto +
+                "idProductoAlmacenado=" + idProductoAlmacenado +
                 ", productoAlmacenado=" + productoAlmacenado +
+                ", posicionDeAlmacenado=" + posicionDeAlmacenado +
                 ", stockDePosicion=" + stockDePosicion +
                 ", volumenAlmacenado=" + volumenAlmacenado +
                 '}';
     }
 
-
-
     @Override
-    public boolean filter(Producto parametroFiltrado) {
-        return this.getProductoAlmacenado().equals(parametroFiltrado);
+    public boolean filter(Integer parametroFiltrado) {
+        return this.getProductoAlmacenado().getHashProducto().equals(parametroFiltrado);
     }
 
     @Override
     public boolean buscar(Integer parametroABuscar) {
-        return this.getIdProducto().equals(parametroABuscar);
+        return this.getIdProductoAlmacenado().equals(parametroABuscar);
     }
 
     @Override
     public int compareTo(ProductoAlmacenado productoAlmacenado) {
-        return this.getIdProducto().compareTo(productoAlmacenado.getIdProducto());
+        return this.getIdProductoAlmacenado().compareTo(productoAlmacenado.getIdProductoAlmacenado());
     }
 
 }

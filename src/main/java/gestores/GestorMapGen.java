@@ -1,4 +1,4 @@
-package Gestor;
+package gestores;
 
 import Interfaces.Buscable;
 import Interfaces.Filtrable;

@@ -1,8 +1,6 @@
 package Orden;
 
-import Productos.Producto;
 import enumeradores.EstadoOrden;
-import estanteria.Posicion;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -19,28 +17,29 @@ public abstract class Orden {
     // la tarea por estantería, y asignarle a los colaboradores que la realicen un grupo determinado de estanterías. Esto generará que pierdan menos tiempo
     // en el recorrido de todas las entanterías (solo se avocan a las estanterías que le corresponden)
 
-    private Producto producto;
+    private Integer hashProducto;
     private Integer cantidadProducto;
-    private Integer posicion;
+    private Integer hashPosicion;
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaRealizacion;
     private Integer legajo;              //Legajo del colaborador que realiza la orden
     private EstadoOrden estado;
 
-    public Orden(Producto producto, Integer cantidadProducto ) { //la orden se crea siempre EN_PROCESO
-        this.producto = producto;
+    public Orden(Integer hashProducto, Integer cantidadProducto, Integer hashPosicion) { //la orden se crea siempre EN_PROCESO
+        this.hashProducto = hashProducto;
         this.cantidadProducto = cantidadProducto;
-        this.posicion=null;
+        this.hashPosicion =hashPosicion;
         this.fechaCreacion = LocalDateTime.now();
         this.estado = EstadoOrden.EN_PROCESO;
     }
 
-    public Producto getProducto() {
-        return producto;
+
+    public Integer getHashProducto() {
+        return hashProducto;
     }
 
-    public void setProducto(Producto producto) {
-        this.producto = producto;
+    public void setHashProducto(Integer hashProducto) {
+        this.hashProducto = hashProducto;
     }
 
     public Integer getCantidadProducto() {
@@ -51,12 +50,12 @@ public abstract class Orden {
         this.cantidadProducto = cantidadProducto;
     }
 
-    public Integer getPosicion() {
-        return posicion;
+    public Integer getHashPosicion() {
+        return hashPosicion;
     }
 
-    public void setPosicion(Integer posicion) {
-        this.posicion = posicion;
+    public void setHashPosicion(Integer hashPosicion) {
+        this.hashPosicion = hashPosicion;
     }
 
     public LocalDateTime getFechaCreacion() {
@@ -97,21 +96,21 @@ public abstract class Orden {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Orden orden = (Orden) o;
-        return Objects.equals(getProducto(), orden.getProducto()) && Objects.equals(getCantidadProducto(), orden.getCantidadProducto()) && Objects.equals(getPosicion(), orden.getPosicion()) && Objects.equals(getFechaCreacion(), orden.getFechaCreacion()) && Objects.equals(getFechaRealizacion(), orden.getFechaRealizacion()) && Objects.equals(getLegajo(), orden.getLegajo()) && getEstado() == orden.getEstado();
+        return Objects.equals(getHashProducto(), orden.getHashProducto()) && Objects.equals(getCantidadProducto(), orden.getCantidadProducto()) && Objects.equals(getHashPosicion(), orden.getHashPosicion()) && Objects.equals(getFechaCreacion(), orden.getFechaCreacion()) && Objects.equals(getFechaRealizacion(), orden.getFechaRealizacion()) && Objects.equals(getLegajo(), orden.getLegajo()) && getEstado() == orden.getEstado();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getProducto(), getCantidadProducto(), getFechaCreacion(), getEstado());
+        return Objects.hash(getHashProducto(), getCantidadProducto(), getHashPosicion(), getFechaCreacion(), getFechaRealizacion(), getLegajo(), getEstado());
     }
 
     @Override
     public String toString() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         return "Orden{" +
-                "producto=" + producto +
+                "hashProducto=" + hashProducto +
                 ", cantidadProducto=" + cantidadProducto +
-                ", posicion=" + posicion +
+                ", posicion=" + hashPosicion +
                 ", fechaCreacion=" + fechaCreacion.format(formatter)+
                 ", fechaRealizacion=" + fechaRealizacion.format(formatter) +
                 ", legajo=" + legajo +
@@ -123,3 +122,4 @@ public abstract class Orden {
     public abstract void cancelarOrden();
 
 }
+
