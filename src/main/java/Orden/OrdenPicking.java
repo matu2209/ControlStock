@@ -14,8 +14,8 @@ public class OrdenPicking extends Orden implements Comparable<OrdenPicking>, Bus
     private final Integer idOrden;
     private String pedido;
 
-    public OrdenPicking(Integer hashProducto, Integer cantidadProducto, DestinoEcommerce destinoEcommerce, String pedido, Integer hashPosicion) {
-        super(hashProducto, cantidadProducto, hashPosicion);
+    public OrdenPicking(Integer hashProducto, Integer cantidadProducto, DestinoEcommerce destinoEcommerce, String pedido, Integer hashPosicionCreacion) {
+        super(hashProducto, cantidadProducto, hashPosicionCreacion);
         this.destinoEcommerce = destinoEcommerce;
         this.idOrden = autoID++;
         this.pedido = pedido;
@@ -81,8 +81,7 @@ public class OrdenPicking extends Orden implements Comparable<OrdenPicking>, Bus
     }
 
     @Override
-    public void finalizarOrden(Integer legajoRealizador, Integer posicion){
-        this.setHashPosicion(posicion);
+    public void finalizarOrden(Integer legajoRealizador){
         this.setLegajo(legajoRealizador);
         this.setEstado(EstadoOrden.FINALIZADA);
         this.setFechaRealizacion(LocalDateTime.now());
