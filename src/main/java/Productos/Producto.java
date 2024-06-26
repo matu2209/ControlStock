@@ -3,23 +3,43 @@ package Productos;
 
 import Interfaces.Buscable;
 import Interfaces.Filtrable;
+import com.google.gson.annotations.SerializedName;
 import enumeradores.Empresa;
 import enumeradores.Prioridad;
 
 import java.util.Objects;
 
 public abstract class Producto implements Comparable<Producto>, Buscable <Integer>, Filtrable<Prioridad> {
+    @SerializedName("hashProducto")
     private Integer hashProducto;
+    @SerializedName("marca")
     private String marca;
+    @SerializedName("articulo")
     private String articulo;
+    @SerializedName("talle")
     private Integer talle;
+    @SerializedName("stock")
     private Integer stock; //STOCK TOTAL en el CENTRO DE DISTRIBUCION
+    @SerializedName("volumen")
     private Double volumen;
+    @SerializedName("prioridad")
     private Prioridad prioridad;
+    @SerializedName("empresa")
     private Empresa empresa;
 
     public Producto(String marca, String articulo, Integer talle, Integer stock, Double volumen, Prioridad prioridad, Empresa empresa) {
         this.hashProducto = Objects.hash(marca, articulo, talle);
+        this.marca = marca;
+        this.articulo = articulo;
+        this.talle = talle;
+        this.stock = stock;
+        this.volumen = volumen;
+        this.prioridad = prioridad;
+        this.empresa = empresa;
+    }
+
+    public Producto(Integer hashProducto, String marca, String articulo, Integer talle, Integer stock, Double volumen, Prioridad prioridad, Empresa empresa) {
+        this.hashProducto = hashProducto;
         this.marca = marca;
         this.articulo = articulo;
         this.talle = talle;
@@ -125,15 +145,14 @@ public abstract class Producto implements Comparable<Producto>, Buscable <Intege
     @Override
     public String toString() {
         return "Producto{" +
-                "hashProducto=" + hashProducto +
-                ", marca='" + marca + '\'' +
-                ", articulo='" + articulo + '\'' +
-                ", talle=" + talle +
-                ", stock=" + stock +
-                ", volumen=" + volumen +
-                ", prioridad=" + prioridad +
-                ", empresa=" + empresa +
-                '}';
+                "hashProducto:" + hashProducto +
+                ", marca:" + marca  +
+                ", articulo: " + articulo +
+                ", talle:" + talle +
+                ", stock:" + stock +
+                ", volumen:" + volumen +
+                ", prioridad:" + prioridad +
+                ", empresa:" + empresa;
     }
 }
 

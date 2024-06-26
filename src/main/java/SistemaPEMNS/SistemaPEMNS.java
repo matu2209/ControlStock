@@ -2,26 +2,28 @@ package SistemaPEMNS;
 
 import excepciones.*;
 import gestores.GestorCollGen;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import enumeradores.*;
+import excepciones.FaltaDeEspacioException;
+import excepciones.FaltaDeStockException;
 import gestores.GestorMapGen;
 import Productos.Accesorios;
 import Productos.Calzado;
 import Productos.Indumentaria;
 import Productos.Producto;
 import Orden.*;
-import enumeradores.DestinoEcommerce;
-import enumeradores.Empresa;
-import enumeradores.Prioridad;
 import estanteria.Estanteria;
 import estanteria.Posicion;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import productoAlmacenado.ProductoAlmacenado;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -40,12 +42,12 @@ public class SistemaPEMNS {
 
 
     public SistemaPEMNS() {
-        this.gestorProductos = new GestorCollGen<>(new TreeSet<>());
+        this.gestorProductos = new GestorCollGen<>(new TreeSet<Producto>());
         this.gestorOrdenesAlmacenamiento = new GestorCollGen<>(new PriorityQueue<OrdenAlmacenamiento>());
         this.gestorOrdenesPicking = new GestorCollGen<>(new PriorityQueue<OrdenPicking>());
-        this.gestorEstanteria = new GestorCollGen<>(new ArrayList<>());
-        this.mapaRelacionalRastreo=new GestorMapGen<>(new TreeMap<>());
-        this.mapaRelacionalAlmacenamiento=new GestorMapGen<>(new TreeMap<>());
+        this.gestorEstanteria = new GestorCollGen<>(new ArrayList<Estanteria>());
+        this.mapaRelacionalRastreo=new GestorMapGen<>(new TreeMap<Producto,LinkedList<Posicion>>());
+        this.mapaRelacionalAlmacenamiento=new GestorMapGen<>(new TreeMap<Posicion,LinkedList<ProductoAlmacenado>>());
     }
 
     public GestorCollGen<Producto, TreeSet<Producto>, Integer, Prioridad> getGestorProductos() {
@@ -98,14 +100,15 @@ public class SistemaPEMNS {
 
         if (cantidadAPickear > 0) {
             // No se pudo completar el picking de todos los productos solicitados
-            throw new FaltaDeStockException("No se puede generar la orden de pickeo del producto " + hashProducto + " por falta de stock");
+            throw new FaltaDeStockException(hashProducto);
         }
 
         return cantidad - cantidadAPickear; // Retorna la cantidad que se logró asignar para pickear
     }
 
 
-    public int generarOrdenAlmacenamientoDesdeRemito(Integer hashProducto, Integer cantidad, Empresa empresa, String nroRemito )throws  FaltaDeEspacioException {
+
+    public int generarOrdenAlmacenamientoDesdeRemito(Integer hashProducto, Integer cantidad, Empresa empresa, String nroRemito) throws FaltaDeEspacioException {
         Producto productoAAlmacenar = getGestorProductos().buscarPrimero(hashProducto); // Busco el objeto producto a almacenar en el gestor de productos para obtener los atributos del mismo
         int cantidadAAlmacenar = cantidad;
         int indexPosicion = 0;
@@ -248,6 +251,112 @@ public class SistemaPEMNS {
             }
 
         } catch (IOException e) {
+            return e.getMessage();
+        }
+    }
+
+    public String leerProductosExel() {
+        String path = "src/main/resources/productos.xlsx";
+        File archivo = new File(path);
+
+        try {
+
+            InputStream input = new FileInputStream(archivo);
+            XSSFWorkbook workbook = new XSSFWorkbook(input);
+            XSSFSheet sheet = workbook.getSheetAt(0);
+
+
+            Iterator<Row> filas = sheet.rowIterator();
+            Iterator<Cell> columnas = null;
+            Integer hashProducto = 0, talle = 0, stock = 0;
+            Double volumen = 0.0;
+            Prioridad prioridad = null;
+            Empresa empresa = null;
+            String marca = "", articulo = "";
+            Segmento segmento;
+            Disciplina disciplina = null;
+
+            Row filaActual = null;
+            Cell columnaActual = null;
+            filas.next();
+            while (filas.hasNext()) {
+                filaActual = filas.next();
+                columnas = filaActual.cellIterator();
+                Iterator<Cell> encabezado = sheet.getRow(0).cellIterator();
+                Cell columnaEncabezado = null;
+
+                while (columnas.hasNext()) {
+                    columnaActual = columnas.next();
+                    columnaEncabezado = encabezado.next();
+
+                    //aca uso encabezado para ver donde estoy parado
+                    //las filas corresponden
+//                    if (columnaEncabezado.getCellType() == CellType.NUMERIC) {
+//                        //hashProducto = (int) cell.getNumericCellValue();
+//                        System.out.println(columnaEncabezado.getNumericCellValue());
+//                    }
+//                    if (columnaEncabezado.getCellType() == CellType.STRING) {
+//                        System.out.println(columnaEncabezado.getStringCellValue());
+//                    }
+                    if (columnaEncabezado.getStringCellValue().equals("Codigo")) {
+                        hashProducto = (int) columnaActual.getNumericCellValue();
+                    }
+                    if (columnaEncabezado.getStringCellValue().equals("Marca")) {
+                        marca = columnaActual.getStringCellValue();
+                    }
+                    if (columnaEncabezado.getStringCellValue().equals("Articulo")) {
+                        articulo = columnaActual.getStringCellValue();
+                    }
+                    if (columnaEncabezado.getStringCellValue().equals("Talle")) {
+                        talle = (int) columnaActual.getNumericCellValue();
+                    }
+                    if (columnaEncabezado.getStringCellValue().equals("Stock")) {
+                        stock = (int) columnaActual.getNumericCellValue();
+                    }
+                    if (columnaEncabezado.getStringCellValue().equals("Volumen")) {
+                        volumen = columnaActual.getNumericCellValue();
+                    }
+                    if (columnaEncabezado.getStringCellValue().equals("Prioridad")) {
+                        prioridad = Prioridad.valueOf(columnaActual.getStringCellValue());
+                    }
+                    if (columnaEncabezado.getStringCellValue().equals("Empresa")) {
+                        empresa = Empresa.valueOf(columnaActual.getStringCellValue());
+                    }
+                    if (columnaEncabezado.getStringCellValue().equals("Segmento/disciplina")) {
+                        if ((columnaActual.getStringCellValue()).equals("ADULTOS") || (columnaActual.getStringCellValue()).equals("NINIOS")) {
+                            segmento = Segmento.valueOf(columnaActual.getStringCellValue());
+                            if (talle > 25) {
+                                gestorProductos.agregar(new Calzado(hashProducto, marca, articulo, talle, stock, volumen, prioridad, segmento, empresa));
+                            } else {
+                                gestorProductos.agregar(new Indumentaria(hashProducto, marca, articulo, talle, stock, volumen, prioridad, segmento, empresa));
+                            }
+                        } else {
+                            disciplina = Disciplina.valueOf(columnaActual.getStringCellValue());
+                            gestorProductos.agregar(new Accesorios(hashProducto, marca, articulo, talle, stock, volumen, prioridad, disciplina, empresa));
+                        }
+                    }
+                }
+
+            }
+            input.close();
+            workbook.close();
+            return "bien capo";
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+    }
+
+    public String guardarMapaRelacionalRastreo() throws IOException {
+        String path = "src/main/resources/maparastreo.json";
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String json = gson.toJson(mapaRelacionalRastreo.getMapa());
+        System.out.println(json);
+        try (FileWriter writer = new FileWriter(path)) {
+            writer.write(json);
+            writer.flush();
+            writer.close();
+            return "mapa guardado";
+        } catch (IOException e){
             return e.getMessage();
         }
     }

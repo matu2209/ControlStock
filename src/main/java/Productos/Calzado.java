@@ -1,5 +1,6 @@
 package Productos;
 
+import com.google.gson.annotations.SerializedName;
 import enumeradores.Empresa;
 import enumeradores.Prioridad;
 import enumeradores.Segmento;
@@ -7,10 +8,16 @@ import enumeradores.Segmento;
 import java.util.Objects;
 
 public class Calzado extends Producto {
+    @SerializedName("segmento")
     private final Segmento segmento;
 
     public Calzado(String marca, String articulo, Integer talle, Integer stock, Double volumen, Prioridad prioridad, Segmento segmento, Empresa empresa) {
         super(marca, articulo, talle, stock, volumen, prioridad, empresa);
+        this.segmento = segmento;
+    }
+
+    public Calzado(Integer hashProducto, String marca, String articulo, Integer talle, Integer stock, Double volumen, Prioridad prioridad, Segmento segmento, Empresa empresa) {
+        super(hashProducto,marca, articulo, talle, stock, volumen, prioridad, empresa);
         this.segmento = segmento;
     }
 
@@ -34,8 +41,7 @@ public class Calzado extends Producto {
 
     @Override
     public String toString() {
-        return "Calzado{" +
-                "segmento=" + segmento +
-                '}';
+        return super.toString() +
+                ", segmento:" + segmento +'}';
     }
 }

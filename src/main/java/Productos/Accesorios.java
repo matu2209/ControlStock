@@ -3,6 +3,7 @@ package Productos;
 import enumeradores.Disciplina;
 import enumeradores.Empresa;
 import enumeradores.Prioridad;
+import enumeradores.Segmento;
 
 import java.util.Objects;
 
@@ -15,8 +16,13 @@ public class Accesorios extends Producto{
         this.disciplina = disciplina;
     }
 
-    public Disciplina getDisciplina() {
-        return disciplina;
+    public Accesorios(Integer hashProducto, String marca, String articulo, Integer talle, Integer stock, Double volumen, Prioridad prioridad, Disciplina disciplina, Empresa empresa) {
+        super(hashProducto,marca,articulo,talle,stock,volumen,prioridad, empresa);
+        this.disciplina = disciplina;
+    }
+
+    public String getDisciplina() {
+        return disciplina.toString();
     }
 
     @Override
@@ -35,8 +41,7 @@ public class Accesorios extends Producto{
 
     @Override
     public String toString() {
-        return "Accesorios{" +
-                "disciplina=" + disciplina +
-                '}';
+        return super.toString()+
+                ", disciplina:" + disciplina+'}';
     }
 }

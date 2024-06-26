@@ -2,7 +2,7 @@ package enumeradores;
 
 public enum Segmento {
     ADULTOS (1),
-    NIÑOS (5);
+    NINIOS (5);
 
     private int valor;
 

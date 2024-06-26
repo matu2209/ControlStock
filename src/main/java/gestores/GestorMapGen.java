@@ -14,6 +14,10 @@ public class GestorMapGen<K extends Buscable<B> & Filtrable<F> & Comparable<K>, 
         this.mapa = mapa;
     }
 
+    public M getMapa() {
+        return mapa;
+    }
+
     public void agregar(K clave, V valor) {
         mapa.computeIfAbsent(clave, k -> new LinkedList<>()).add(valor);
     }

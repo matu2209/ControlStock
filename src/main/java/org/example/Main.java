@@ -9,6 +9,12 @@ import enumeradores.Disciplina;
 import enumeradores.Empresa;
 import enumeradores.Prioridad;
 import enumeradores.Segmento;
+import estanteria.Estanteria;
+import estanteria.EstanteriaCalzado;
+import estanteria.EstanteriaIndAcc;
+import estanteria.Posicion;
+
+import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
@@ -65,25 +71,44 @@ public class Main {
         Indumentaria i2 = new Indumentaria("new balance","buzo essentials",2,25,5.0,Prioridad.ALTA,Segmento.ADULTOS,Empresa.LIBERTAD);
         Indumentaria i4 = new Indumentaria("speed","musculosa c-recortes",1,30,5.0,Prioridad.ALTA,Segmento.ADULTOS,Empresa.LIBERTAD);
         SistemaPEMNS sistema = new SistemaPEMNS();
-        sistema.getGestorProductos().agregar(a1);
-        sistema.getGestorProductos().agregar(a2);
-        sistema.getGestorProductos().agregar(a3);
-        sistema.getGestorProductos().agregar(a4);
-        sistema.getGestorProductos().agregar(n1);
-        sistema.getGestorProductos().agregar(n2);
-        sistema.getGestorProductos().agregar(n3);
-        sistema.getGestorProductos().agregar(n4);
-        sistema.getGestorProductos().agregar(n5);
-        sistema.getGestorProductos().agregar(n6);
-        sistema.getGestorProductos().agregar(n7);
-        sistema.getGestorProductos().agregar(n8);
-        sistema.getGestorProductos().agregar(i1);
-        sistema.getGestorProductos().agregar(i2);
-        sistema.getGestorProductos().agregar(i4);
-        sistema.getGestorProductos().getElementos().forEach(System.out::println);
+//        sistema.getGestorProductos().agregar(a1);
+//        sistema.getGestorProductos().agregar(a2);
+//        sistema.getGestorProductos().agregar(a3);
+//        sistema.getGestorProductos().agregar(a4);
+//        sistema.getGestorProductos().agregar(n1);
+//        sistema.getGestorProductos().agregar(n2);
+//        sistema.getGestorProductos().agregar(n3);
+//        sistema.getGestorProductos().agregar(n4);
+//        sistema.getGestorProductos().agregar(n5);
+//        sistema.getGestorProductos().agregar(n6);
+//        sistema.getGestorProductos().agregar(n7);
+//        sistema.getGestorProductos().agregar(n8);
+//        sistema.getGestorProductos().agregar(i1);
+//        sistema.getGestorProductos().agregar(i2);
+//        sistema.getGestorProductos().agregar(i4);
+        //sistema.getGestorProductos().getElementos().forEach(System.out::println);
 
-        sistema.guardarProductosExel();
+        //sistema.guardarProductosExel();
+        Estanteria e1 = new EstanteriaCalzado(Prioridad.ALTA,Empresa.LIBERTAD);
+        e1.crearPosicionesEstanteria();
+        Estanteria e2 = new EstanteriaIndAcc(Prioridad.MEDIA,Empresa.ALMACEN_ADIDAS);
+        e2.crearPosicionesEstanteria();
+        //sistema.leerProductosExel();
+        sistema.getGestorEstanteria().agregar(e1);
+        sistema.getGestorEstanteria().agregar(e2);
+        sistema.getMapaRelacionalRastreo().agregar(n1,sistema.getGestorEstanteria().getElementos().get(1).getListaPosiciones().getElementos().get(1));
+        sistema.getMapaRelacionalRastreo().agregar(n1,sistema.getGestorEstanteria().getElementos().get(1).getListaPosiciones().getElementos().get(4));
+        sistema.getMapaRelacionalRastreo().agregar(n2,sistema.getGestorEstanteria().getElementos().get(1).getListaPosiciones().getElementos().get(2));
+        sistema.getMapaRelacionalRastreo().agregar(n3,sistema.getGestorEstanteria().getElementos().get(1).getListaPosiciones().getElementos().get(3));
+        sistema.getMapaRelacionalRastreo().agregar(n4,sistema.getGestorEstanteria().getElementos().get(1).getListaPosiciones().getElementos().get(4));
+//        System.out.println(sistema.getMapaRelacionalRastreo().valores());
 
+
+        try {
+            sistema.guardarMapaRelacionalRastreo();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         System.out.println("Hello world!");
     }
 }
