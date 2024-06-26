@@ -115,11 +115,12 @@ public class SistemaPEMNS {
 
         // Filtra la lista de posiciones por aquellas que tienen un volumen disponible mayor o igual al del producto que va a almacenar
         // y luego las vuelve a filtrar por aquellas que matchean por la prioridad de nuestro producto
-        List<Posicion> posicionesLibres = this.getMapaRelacionalAlmacenamiento()
-                .filtrarClaves(productoAAlmacenar.getVolumen())
-                .stream()
-                .filter(element -> element.filtrarPorPrioridad(productoAAlmacenar.getPrioridad()))
-                .toList();
+//        List<Posicion> posicionesLibres = this.getMapaRelacionalAlmacenamiento()
+//                .filtrarClaves(productoAAlmacenar.getVolumen())
+//                .stream()
+//                .filter(element -> element.filtrarPorPrioridad(productoAAlmacenar.getPrioridad()))
+//                .toList();
+        List<Posicion> posicionesLibres = this.getGestorEstanteria().buscarPrimero(1).getListaPosiciones().getElementos().stream().filter(posicion -> posicion.getVolumenDisponible() > (productoAAlmacenar.getVolumen()*cantidad)).toList();
 
         while (cantidadAAlmacenar > 0 && indexPosicion < posicionesLibres.size()) {
             Posicion posicion = posicionesLibres.get(indexPosicion);
@@ -128,7 +129,7 @@ public class SistemaPEMNS {
             if (volumenRequerido <= posicion.getVolumenDisponible()) {
                 getGestorOrdenesAlmacenamiento().agregar(new OrdenAlmacenamiento(hashProducto, cantidadAAlmacenar, posicion.getHashPosicion(), nroRemito, empresa));
                 cantidadAAlmacenar = 0; //El producto fue almacenado por completo
-                break;
+                return cantidadAAlmacenar;
             } else {
                 int cantidadPorPosicion = (int) Math.floor(posicion.getVolumenDisponible() / productoAAlmacenar.getVolumen());
                 getGestorOrdenesAlmacenamiento().agregar(new OrdenAlmacenamiento(hashProducto, cantidadPorPosicion,  posicion.getHashPosicion(), nroRemito, empresa));
@@ -346,22 +347,28 @@ public class SistemaPEMNS {
         }
     }
 
-    public String guardarMapaRelacionalRastreo() throws IOException {
+    public String guardarMapaRelacionalRastreo() {
         String path = "src/main/resources/maparastreo.json";
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        //StringBuilder json= new StringBuilder();
-        String json ="";
-        for (Map.Entry<Producto, LinkedList<Posicion>> entry : mapaRelacionalRastreo.getMapa().entrySet()) {
-//           json.append(gson.toJson(entry.getKey()));
-//           json.append(gson.toJson(entry.getValue()));+
-            json = json+gson.toJson(entry.getKey());
-            json = json+gson.toJson(entry.getValue());
-        }
-        System.out.println(json);
+        String json = gson.toJson(mapaRelacionalRastreo.getMapa());
+
         try (FileWriter writer = new FileWriter(path)) {
             writer.write(json);
             writer.flush();
-            writer.close();
+            return "mapa guardado";
+        } catch (IOException e){
+            return e.getMessage();
+        }
+    }
+
+    public String guardarMapaRelacionalAlmacenamiento() {
+        String path = "src/main/resources/mapaalmacenamiento.json";
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String json = gson.toJson(mapaRelacionalAlmacenamiento.getMapa());
+
+        try (FileWriter writer = new FileWriter(path)) {
+            writer.write(json);
+            writer.flush();
             return "mapa guardado";
         } catch (IOException e){
             return e.getMessage();
@@ -384,7 +391,20 @@ public class SistemaPEMNS {
                 .orElse(null);
     }
 
-
+    public String guardarEstanterias(){
+        String path = "src/main/resources/estanterias.json";
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String json ="";
+        json = gson.toJson(gestorEstanteria);
+        try (FileWriter writer = new FileWriter(path)) {
+            writer.write(json);
+            writer.flush();
+            writer.close();
+            return "mapa guardado";
+        } catch (IOException e){
+            return e.getMessage();
+        }
+    }
 
     /*public boolean generarOrdenPicking(Integer hashProducto, int cantidad, String idPedido, DestinoEcommerce ecommerce) {
         //buscar el producto
