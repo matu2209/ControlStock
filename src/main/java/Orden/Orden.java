@@ -19,7 +19,7 @@ public abstract class Orden {
 
     private Integer hashProducto;
     private Integer cantidadProducto;
-    private Integer hashPosicion;
+    private Integer hashPosicionCreacion;
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaRealizacion;
     private Integer legajo;              //Legajo del colaborador que realiza la orden
@@ -28,7 +28,7 @@ public abstract class Orden {
     public Orden(Integer hashProducto, Integer cantidadProducto, Integer hashPosicion) { //la orden se crea siempre EN_PROCESO
         this.hashProducto = hashProducto;
         this.cantidadProducto = cantidadProducto;
-        this.hashPosicion =hashPosicion;
+        this.hashPosicionCreacion =hashPosicion;
         this.fechaCreacion = LocalDateTime.now();
         this.estado = EstadoOrden.EN_PROCESO;
     }
@@ -50,12 +50,12 @@ public abstract class Orden {
         this.cantidadProducto = cantidadProducto;
     }
 
-    public Integer getHashPosicion() {
-        return hashPosicion;
+    public Integer getHashPosicionCreacion() {
+        return hashPosicionCreacion;
     }
 
-    public void setHashPosicion(Integer hashPosicion) {
-        this.hashPosicion = hashPosicion;
+    public void setHashPosicionCreacion(Integer hashPosicionCreacion) {
+        this.hashPosicionCreacion = hashPosicionCreacion;
     }
 
     public LocalDateTime getFechaCreacion() {
@@ -96,12 +96,12 @@ public abstract class Orden {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Orden orden = (Orden) o;
-        return Objects.equals(getHashProducto(), orden.getHashProducto()) && Objects.equals(getCantidadProducto(), orden.getCantidadProducto()) && Objects.equals(getHashPosicion(), orden.getHashPosicion()) && Objects.equals(getFechaCreacion(), orden.getFechaCreacion()) && Objects.equals(getFechaRealizacion(), orden.getFechaRealizacion()) && Objects.equals(getLegajo(), orden.getLegajo()) && getEstado() == orden.getEstado();
+        return Objects.equals(getHashProducto(), orden.getHashProducto()) && Objects.equals(getCantidadProducto(), orden.getCantidadProducto()) && Objects.equals(getHashPosicionCreacion(), orden.getHashPosicionCreacion()) && Objects.equals(getFechaCreacion(), orden.getFechaCreacion()) && Objects.equals(getFechaRealizacion(), orden.getFechaRealizacion()) && Objects.equals(getLegajo(), orden.getLegajo()) && getEstado() == orden.getEstado();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getHashProducto(), getCantidadProducto(), getHashPosicion(), getFechaCreacion(), getFechaRealizacion(), getLegajo(), getEstado());
+        return Objects.hash(getHashProducto(), getCantidadProducto(), getHashPosicionCreacion(), getFechaCreacion(), getFechaRealizacion(), getLegajo(), getEstado());
     }
 
     @Override
@@ -110,7 +110,7 @@ public abstract class Orden {
         return "Orden{" +
                 "hashProducto=" + hashProducto +
                 ", cantidadProducto=" + cantidadProducto +
-                ", posicion=" + hashPosicion +
+                ", posicionCreacion=" + hashPosicionCreacion +
                 ", fechaCreacion=" + fechaCreacion.format(formatter)+
                 ", fechaRealizacion=" + fechaRealizacion.format(formatter) +
                 ", legajo=" + legajo +
@@ -118,7 +118,7 @@ public abstract class Orden {
                 '}';
     }
 
-    public abstract void finalizarOrden(Integer legajoRealizador, Integer posicion);
+    public abstract void finalizarOrden(Integer legajoRealizador);
     public abstract void cancelarOrden();
 
 }

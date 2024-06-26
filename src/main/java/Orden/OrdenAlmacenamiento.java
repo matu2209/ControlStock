@@ -13,12 +13,15 @@ public class OrdenAlmacenamiento extends Orden implements Comparable<OrdenAlmace
     private final Integer idOrden;
     private String nroRemito;
     private Empresa empresa;
+    private Integer hashPosicionAlmacenamiento;
 
-    public OrdenAlmacenamiento(Integer hashProducto, Integer cantidadProducto, String nroRemito, Empresa empresa, Integer hashPosicion) {
-        super(hashProducto, cantidadProducto, hashPosicion);
+
+    public OrdenAlmacenamiento(Integer hashProducto, Integer cantidadProducto,Integer hashPosicionCreacion, String nroRemito, Empresa empresa) {
+        super(hashProducto, cantidadProducto, hashPosicionCreacion);
         this.idOrden = autoID++;
         this.nroRemito = nroRemito;
         this.empresa = empresa;
+        this.hashPosicionAlmacenamiento = null;
     }
 
 
@@ -42,6 +45,14 @@ public class OrdenAlmacenamiento extends Orden implements Comparable<OrdenAlmace
         this.empresa = empresa;
     }
 
+    public Integer getHashPosicionAlmacenamiento() {
+        return hashPosicionAlmacenamiento;
+    }
+
+    public void setHashPosicionAlmacenamiento(Integer hashPosicionAlmacenamiento) {
+        this.hashPosicionAlmacenamiento = hashPosicionAlmacenamiento;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -62,6 +73,7 @@ public class OrdenAlmacenamiento extends Orden implements Comparable<OrdenAlmace
                 "idOrden=" + idOrden +
                 ", nroRemito='" + nroRemito + '\'' +
                 ", empresa=" + empresa +
+                "hashPosicionAlmacenamiento=" + hashPosicionAlmacenamiento +
                 '}';
     }
 
@@ -80,10 +92,15 @@ public class OrdenAlmacenamiento extends Orden implements Comparable<OrdenAlmace
         return this.getIdOrden().compareTo(orden.getIdOrden());
     }
 
-
     @Override
-    public void finalizarOrden(Integer legajoRealizador, Integer posicion){
-        this.setHashPosicion(posicion);
+    public void finalizarOrden(Integer legajoRealizador){
+        this.setLegajo(legajoRealizador);
+        this.setEstado(EstadoOrden.FINALIZADA);
+        this.setFechaRealizacion(LocalDateTime.now());
+    }
+
+    public void finalizarOrden(Integer legajoRealizador, Integer hashPosicionAlmacenamiento){
+        this.setHashPosicionCreacion(hashPosicionAlmacenamiento);
         this.setLegajo(legajoRealizador);
         this.setEstado(EstadoOrden.FINALIZADA);
         this.setFechaRealizacion(LocalDateTime.now());

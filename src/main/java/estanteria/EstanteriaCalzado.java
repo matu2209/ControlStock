@@ -37,7 +37,8 @@ public class EstanteriaCalzado extends Estanteria{
 
     @Override
     public boolean buscar(Integer parametroABuscar) {
-        return this.getIdEstanteria().equals(parametroABuscar);
+        return (this instanceof EstanteriaCalzado) ? this.getIdEstanteria().equals(parametroABuscar) : false;
+
     }
 
 

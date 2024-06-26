@@ -1,12 +1,12 @@
 package SistemaPEMNS;
 
+import excepciones.*;
+import gestores.GestorCollGen;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import enumeradores.*;
 import excepciones.FaltaDeEspacioException;
 import excepciones.FaltaDeStockException;
-import gestores.GestorCollGen;
-
 import gestores.GestorMapGen;
 import Productos.Accesorios;
 import Productos.Calzado;
@@ -25,6 +25,7 @@ import productoAlmacenado.ProductoAlmacenado;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class SistemaPEMNS {
     //GESTORES MANEJADORES DE CLASES ESPECIFICOS DE NUESTRO SISTEMA
@@ -106,6 +107,7 @@ public class SistemaPEMNS {
     }
 
 
+
     public int generarOrdenAlmacenamientoDesdeRemito(Integer hashProducto, Integer cantidad, Empresa empresa, String nroRemito) throws FaltaDeEspacioException {
         Producto productoAAlmacenar = getGestorProductos().buscarPrimero(hashProducto); // Busco el objeto producto a almacenar en el gestor de productos para obtener los atributos del mismo
         int cantidadAAlmacenar = cantidad;
@@ -124,12 +126,12 @@ public class SistemaPEMNS {
             double volumenRequerido = productoAAlmacenar.getVolumen() * cantidadAAlmacenar;
 
             if (volumenRequerido <= posicion.getVolumenDisponible()) {
-                getGestorOrdenesAlmacenamiento().agregar(new OrdenAlmacenamiento(hashProducto, cantidadAAlmacenar, nroRemito, empresa, posicion.getHashPosicion()));
+                getGestorOrdenesAlmacenamiento().agregar(new OrdenAlmacenamiento(hashProducto, cantidadAAlmacenar, posicion.getHashPosicion(), nroRemito, empresa));
                 cantidadAAlmacenar = 0; //El producto fue almacenado por completo
                 break;
             } else {
                 int cantidadPorPosicion = (int) Math.floor(posicion.getVolumenDisponible() / productoAAlmacenar.getVolumen());
-                getGestorOrdenesAlmacenamiento().agregar(new OrdenAlmacenamiento(hashProducto, cantidadPorPosicion, nroRemito, empresa, posicion.getHashPosicion()));
+                getGestorOrdenesAlmacenamiento().agregar(new OrdenAlmacenamiento(hashProducto, cantidadPorPosicion,  posicion.getHashPosicion(), nroRemito, empresa));
                 cantidadAAlmacenar -= cantidadPorPosicion;
             }
 
@@ -145,40 +147,66 @@ public class SistemaPEMNS {
     }
 
 
-    public boolean confirmarOrdenPicking (){
+    public boolean realizarOrdenPicking (Integer hashOrdenPicking, Integer legajoRealizador){
+
+    }
+
+    public boolean cancelarOrdenPicking(OrdenPicking ordenPicking){
         return true;
     }
 
-    public boolean cancelarOrdenPicking(){
+    public boolean realizarOrdenAlmacenamiento(Integer hashOrdenAlmacenamiento, Integer hashPosicionAlmacenamiento, Integer legajoRealizador) {
+        try {
+            // Obtengo la orden de almacenamiento
+            OrdenAlmacenamiento ordenTrabajada = this.getGestorOrdenesAlmacenamiento().buscarPrimero(hashOrdenAlmacenamiento);
+            if (ordenTrabajada == null) {
+                throw new OrdenNoEncontradaException("Orden de almacenamiento no encontrada.");
+            }
+
+            // Obtengo la posición de almacenamiento
+            Posicion posicionAlmacenamiento = obtenerPosicionPorHash(hashPosicionAlmacenamiento);
+            if (posicionAlmacenamiento == null) {
+                throw new PosicionNoEncontradaException("Posición de almacenamiento no encontrada.");
+            }
+
+            // Obtengo el producto a almacenar
+            Producto productoAlmacenable = this.getGestorProductos().buscarPrimero(ordenTrabajada.getHashProducto());
+            if (productoAlmacenable == null) {
+                throw new ProductoNoEncontradoException("Producto no encontrado.");
+            }
+
+            // Calculo el nuevo volumen disponible en la posición
+            double nuevoVolumenDisponible = posicionAlmacenamiento.getVolumenDisponible() - (productoAlmacenable.getVolumen() * ordenTrabajada.getCantidadProducto());
+            if (nuevoVolumenDisponible < 0) {
+                throw new FaltaDeEspacioException ("No hay suficiente espacio en la posición de almacenamiento.");
+            }
+            posicionAlmacenamiento.setVolumenDisponible(nuevoVolumenDisponible);
+
+            // Cambio el estado de la orden a finalizada
+            ordenTrabajada.finalizarOrden(legajoRealizador, hashPosicionAlmacenamiento);
+
+            // Instancio un nuevo ProductoAlmacenado
+            ProductoAlmacenado nuevoProductoAlmacenado = new ProductoAlmacenado(productoAlmacenable, posicionAlmacenamiento, ordenTrabajada.getCantidadProducto());
+
+            // Agrego el producto almacenado al mapa relacional de almacenamiento
+            this.getMapaRelacionalAlmacenamiento().agregar(posicionAlmacenamiento, nuevoProductoAlmacenado);
+
+            // Agrego la posición al mapa relacional de rastreo
+            this.getMapaRelacionalRastreo().agregar(productoAlmacenable, posicionAlmacenamiento);
+
+            return true;
+        } catch (OrdenNoEncontradaException | PosicionNoEncontradaException | ProductoNoEncontradoException | FaltaDeEspacioException exception) {
+            // Manejar la excepción adecuadamente, aquí simplemente retornamos false
+            System.err.println("Error en la realizacion de la Orden Almacenamiento");
+            return false;
+        }
+    }
+
+    public boolean cancelarOrdenAlmacenamiento(OrdenAlmacenamiento ordenAlmacenamiento, Integer legajoRealizador) {
+
         return true;
     }
 
-    public boolean confirmarOrdenAlmacenamiento(){
-        return true;
-    }
-
-    public boolean cancelarOrdenAlmacenamiento() {
-        return true;
-    }
-
-
-    //HAY QUE MODIFICAR LO DE ABAJO PARA QUE NO TIRE ERROR, AHI ME PONGO A HACERLO
-
-//    public boolean generarOrdenPickingDesdePedido (Integer hashProducto, Integer cantidad, String idPedido, DestinoEcommerce destinoEcommerce){
-//        List<Posicion> posicionesDelProducto = this.getMapaRelacionalRastreo().buscarPorClaveTodos(hashProducto);
-//        Integer cantidadAAlmacenar = cantidad;
-//        int posicion = 0;
-//        while(cantidadAAlmacenar>0){
-//            if(posicionesDelProducto.get(posicion++){
-//
-//            }
-//            new OrdenPicking(hashProducto, cantidad );
-//        }
-//
-//
-//
-//        return ;
-//    }
 
     public String guardarProductosExel(){
         String path = "src/main/resources/calzados.xlsx";
@@ -332,6 +360,23 @@ public class SistemaPEMNS {
             return e.getMessage();
         }
     }
+
+
+    public List<Posicion> obtenerTodasLasPosiciones() {
+        return gestorEstanteria.getElementos().stream()
+                .flatMap(estanteria -> estanteria.getListaPosiciones().getElementos().stream())
+                .collect(Collectors.toList());
+    }
+
+
+    public Posicion obtenerPosicionPorHash(Integer hashPosicion) {
+        return gestorEstanteria.getElementos().stream()
+                .flatMap(estanteria -> estanteria.getListaPosiciones().getElementos().stream())
+                .filter(posicion -> posicion.getHashPosicion().equals(hashPosicion))
+                .findFirst()
+                .orElse(null);
+    }
+
 
 
     /*public boolean generarOrdenPicking(Integer hashProducto, int cantidad, String idPedido, DestinoEcommerce ecommerce) {
