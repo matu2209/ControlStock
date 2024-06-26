@@ -1,7 +1,15 @@
 package excepciones;
 
-public class FaltaDeEspacioException extends Exception {
-    public FaltaDeEspacioException(String mensaje) {
-        super(mensaje);
+public class FaltaDeEspacioException extends Exception{
+    private final String message;
+
+    public FaltaDeEspacioException(String message){
+        this.message = message;
+    }
+
+    @Override
+    public String getMessage(){
+        return message;
     }
 }
+ 
