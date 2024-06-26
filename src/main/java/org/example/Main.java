@@ -1,5 +1,6 @@
 package org.example;
 
+import Orden.*;
 import Productos.Accesorios;
 import Productos.Calzado;
 import Productos.Indumentaria;
@@ -13,7 +14,10 @@ import estanteria.Estanteria;
 import estanteria.EstanteriaCalzado;
 import estanteria.EstanteriaIndAcc;
 import estanteria.Posicion;
+import productoAlmacenado.ProductoAlmacenado;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class Main {
@@ -89,23 +93,67 @@ public class Main {
         //sistema.getGestorProductos().getElementos().forEach(System.out::println);
 
         //sistema.guardarProductosExel();
-        Estanteria e1 = new EstanteriaCalzado(Prioridad.ALTA,Empresa.LIBERTAD);
+        EstanteriaCalzado e1 = new EstanteriaCalzado(Prioridad.ALTA,Empresa.LIBERTAD);
         e1.crearPosicionesEstanteria();
-        Estanteria e2 = new EstanteriaIndAcc(Prioridad.MEDIA,Empresa.ALMACEN_ADIDAS);
+        EstanteriaIndAcc e2 = new EstanteriaIndAcc(Prioridad.MEDIA,Empresa.ALMACEN_ADIDAS);
         e2.crearPosicionesEstanteria();
-        //sistema.leerProductosExel();
+        sistema.leerProductosExel();
         sistema.getGestorEstanteria().agregar(e1);
         sistema.getGestorEstanteria().agregar(e2);
+        try {
+            sistema.generarOrdenAlmacenamientoDesdeRemito(n1.getHashProducto(), 10, Empresa.ALMACEN_ADIDAS, "ASD123");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            sistema.generarOrdenAlmacenamientoDesdeRemito(n1.getHashProducto(), 10, Empresa.ALMACEN_ADIDAS, "ASD123");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            sistema.generarOrdenAlmacenamientoDesdeRemito(n2.getHashProducto(), 10, Empresa.ALMACEN_ADIDAS, "ASD123");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            sistema.generarOrdenAlmacenamientoDesdeRemito(n3.getHashProducto(), 10, Empresa.ALMACEN_ADIDAS, "ASD123");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            sistema.generarOrdenAlmacenamientoDesdeRemito(n4.getHashProducto(), 10, Empresa.ALMACEN_ADIDAS, "ASD123");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            sistema.generarOrdenAlmacenamientoDesdeRemito(n5.getHashProducto(), 10, Empresa.ALMACEN_ADIDAS, "ASD123");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            sistema.generarOrdenAlmacenamientoDesdeRemito(n8.getHashProducto(), 10, Empresa.ALMACEN_ADIDAS, "ASD123");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         sistema.getMapaRelacionalRastreo().agregar(n1,sistema.getGestorEstanteria().getElementos().get(1).getListaPosiciones().getElementos().get(1));
         sistema.getMapaRelacionalRastreo().agregar(n1,sistema.getGestorEstanteria().getElementos().get(1).getListaPosiciones().getElementos().get(4));
         sistema.getMapaRelacionalRastreo().agregar(n2,sistema.getGestorEstanteria().getElementos().get(1).getListaPosiciones().getElementos().get(2));
         sistema.getMapaRelacionalRastreo().agregar(n3,sistema.getGestorEstanteria().getElementos().get(1).getListaPosiciones().getElementos().get(3));
         sistema.getMapaRelacionalRastreo().agregar(n4,sistema.getGestorEstanteria().getElementos().get(1).getListaPosiciones().getElementos().get(4));
 //        System.out.println(sistema.getMapaRelacionalRastreo().valores());
-
-
+//        for (Map.Entry<Posicion, LinkedList<ProductoAlmacenado>> entry : sistema.getMapaRelacionalAlmacenamiento().getMapa().entrySet()){
+//            System.out.println(entry.getKey());
+//            System.out.println(entry.getValue());
+//        }
         try {
             sistema.guardarMapaRelacionalRastreo();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            sistema.guardarEstanterias();
         } catch (Exception e) {
             e.printStackTrace();
         }
