@@ -148,7 +148,7 @@ public class SistemaPEMNS {
 
 
     public boolean realizarOrdenPicking (Integer hashOrdenPicking, Integer legajoRealizador){
-
+        return true;
     }
 
     public boolean cancelarOrdenPicking(OrdenPicking ordenPicking){
@@ -349,7 +349,14 @@ public class SistemaPEMNS {
     public String guardarMapaRelacionalRastreo() throws IOException {
         String path = "src/main/resources/maparastreo.json";
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String json = gson.toJson(mapaRelacionalRastreo.getMapa());
+        //StringBuilder json= new StringBuilder();
+        String json ="";
+        for (Map.Entry<Producto, LinkedList<Posicion>> entry : mapaRelacionalRastreo.getMapa().entrySet()) {
+//           json.append(gson.toJson(entry.getKey()));
+//           json.append(gson.toJson(entry.getValue()));+
+            json = json+gson.toJson(entry.getKey());
+            json = json+gson.toJson(entry.getValue());
+        }
         System.out.println(json);
         try (FileWriter writer = new FileWriter(path)) {
             writer.write(json);
