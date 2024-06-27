@@ -1,12 +1,14 @@
 package Orden;
 
+import Interfaces.Buscable;
+import Interfaces.Filtrable;
 import enumeradores.EstadoOrden;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-public abstract class Orden {
+public abstract class Orden implements Comparable<Orden>, Buscable<Integer>, Filtrable<String> {
 
     //ESTA CLASE solo trabajará con el producto manipulado para una posición determinada,
     // las cantidades manipuladas en esa posición, quién manipula la mercadería, la fecha y si fue
@@ -16,7 +18,8 @@ public abstract class Orden {
     // del almacenamiento), con 5 remitos en simultaneo, y filtrar aquellos articulos por estanteria, dividiendo por ejemplo
     // la tarea por estantería, y asignarle a los colaboradores que la realicen un grupo determinado de estanterías. Esto generará que pierdan menos tiempo
     // en el recorrido de todas las entanterías (solo se avocan a las estanterías que le corresponden)
-
+    private static Integer autoID = 1;
+    private final Integer idOrden;
     private Integer hashProducto;
     private Integer cantidadProducto;
     private Integer hashPosicionCreacion;
@@ -26,6 +29,7 @@ public abstract class Orden {
     private EstadoOrden estado;
 
     public Orden(Integer hashProducto, Integer cantidadProducto, Integer hashPosicion) { //la orden se crea siempre EN_PROCESO
+        this.idOrden = autoID++;
         this.hashProducto = hashProducto;
         this.cantidadProducto = cantidadProducto;
         this.hashPosicionCreacion =hashPosicion;
@@ -33,6 +37,9 @@ public abstract class Orden {
         this.estado = EstadoOrden.EN_PROCESO;
     }
 
+    public Integer getIdOrden() {
+        return idOrden;
+    }
 
     public Integer getHashProducto() {
         return hashProducto;
@@ -90,24 +97,24 @@ public abstract class Orden {
         this.estado = estado;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Orden orden = (Orden) o;
-        return Objects.equals(getHashProducto(), orden.getHashProducto()) && Objects.equals(getCantidadProducto(), orden.getCantidadProducto()) && Objects.equals(getHashPosicionCreacion(), orden.getHashPosicionCreacion()) && Objects.equals(getFechaCreacion(), orden.getFechaCreacion()) && Objects.equals(getFechaRealizacion(), orden.getFechaRealizacion()) && Objects.equals(getLegajo(), orden.getLegajo()) && getEstado() == orden.getEstado();
+        return Objects.equals(getIdOrden(), orden.getIdOrden()) && Objects.equals(getHashProducto(), orden.getHashProducto()) && Objects.equals(getCantidadProducto(), orden.getCantidadProducto()) && Objects.equals(getHashPosicionCreacion(), orden.getHashPosicionCreacion()) && Objects.equals(getFechaCreacion(), orden.getFechaCreacion()) && Objects.equals(getFechaRealizacion(), orden.getFechaRealizacion()) && Objects.equals(getLegajo(), orden.getLegajo()) && getEstado() == orden.getEstado();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getHashProducto(), getCantidadProducto(), getHashPosicionCreacion(), getFechaCreacion(), getFechaRealizacion(), getLegajo(), getEstado());
+        return Objects.hash(getIdOrden(), getHashProducto(), getCantidadProducto(), getHashPosicionCreacion(), getFechaCreacion(), getFechaRealizacion(), getLegajo(), getEstado());
     }
 
     @Override
     public String toString() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         return "Orden{" +
+                "idOrden=" + idOrden +
                 "hashProducto=" + hashProducto +
                 ", cantidadProducto=" + cantidadProducto +
                 ", posicionCreacion=" + hashPosicionCreacion +
@@ -118,8 +125,17 @@ public abstract class Orden {
                 '}';
     }
 
+
+    @Override
+    public int compareTo(Orden orden) {
+        return this.getIdOrden().compareTo(orden.getIdOrden());
+    }
+
     public abstract void finalizarOrden(Integer legajoRealizador);
-    public abstract void cancelarOrden();
+    public void cancelarOrden(){
+        this.setEstado(EstadoOrden.CANCELADA);
+        this.setFechaRealizacion(LocalDateTime.now());
+    }
 
 }
 

@@ -1,24 +1,21 @@
 package Orden;
 
-import Interfaces.Buscable;
-import Interfaces.Filtrable;
 import enumeradores.DestinoEcommerce;
 import enumeradores.EstadoOrden;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class OrdenPicking extends Orden implements Comparable<OrdenPicking>, Buscable<Integer>, Filtrable<String>{ //Se puede filtrar por pedido
+public class OrdenPicking extends Orden{ //Se puede filtrar por pedido
     private DestinoEcommerce destinoEcommerce;
-    private static Integer autoID = 1;
-    private final Integer idOrden;
     private String pedido;
+    private Integer idProductoAlmacenado;
 
-    public OrdenPicking(Integer hashProducto, Integer cantidadProducto, DestinoEcommerce destinoEcommerce, String pedido, Integer hashPosicionCreacion) {
+    public OrdenPicking(Integer hashProducto, Integer cantidadProducto, DestinoEcommerce destinoEcommerce, String pedido, Integer hashPosicionCreacion, Integer idProductoAlmacenado) {
         super(hashProducto, cantidadProducto, hashPosicionCreacion);
         this.destinoEcommerce = destinoEcommerce;
-        this.idOrden = autoID++;
         this.pedido = pedido;
+        this.idProductoAlmacenado = idProductoAlmacenado;
     }
 
 
@@ -30,10 +27,6 @@ public class OrdenPicking extends Orden implements Comparable<OrdenPicking>, Bus
         this.destinoEcommerce = destinoEcommerce;
     }
 
-    public Integer getIdOrden() {
-        return idOrden;
-    }
-
     public String getPedido() {
         return pedido;
     }
@@ -42,32 +35,40 @@ public class OrdenPicking extends Orden implements Comparable<OrdenPicking>, Bus
         this.pedido = pedido;
     }
 
+    public Integer getIdProductoAlmacenado() {
+        return idProductoAlmacenado;
+    }
+
+    public void setIdProductoAlmacenado(Integer idProductoAlmacenado) {
+        this.idProductoAlmacenado = idProductoAlmacenado;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         OrdenPicking that = (OrdenPicking) o;
-        return getDestinoEcommerce() == that.getDestinoEcommerce() && Objects.equals(getIdOrden(), that.getIdOrden()) && Objects.equals(getPedido(), that.getPedido());
+        return getDestinoEcommerce() == that.getDestinoEcommerce() && Objects.equals(getPedido(), that.getPedido()) && Objects.equals(getIdProductoAlmacenado(), that.getIdProductoAlmacenado());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), getDestinoEcommerce(), getIdOrden(), getPedido());
+        return Objects.hash(super.hashCode(), getDestinoEcommerce(), getPedido(), getIdProductoAlmacenado());
     }
 
     @Override
     public String toString() {
         return "OrdenPicking{" +
                 "destinoEcommerce=" + destinoEcommerce +
-                ", idOrden=" + idOrden +
                 ", pedido='" + pedido + '\'' +
+                ", idProductoAlmacenado=" + idProductoAlmacenado +
                 '}';
     }
 
     @Override
     public boolean buscar(Integer parametroABuscar) {
-        return this.getIdOrden().equals(parametroABuscar);
+        return super.getIdOrden().equals(parametroABuscar);
     }
 
     @Override
@@ -75,10 +76,6 @@ public class OrdenPicking extends Orden implements Comparable<OrdenPicking>, Bus
         return this.getPedido().equalsIgnoreCase(parametroFiltrado);
     }
 
-    @Override
-    public int compareTo(OrdenPicking orden) {
-        return this.getIdOrden().compareTo(orden.getIdOrden());
-    }
 
     @Override
     public void finalizarOrden(Integer legajoRealizador){
@@ -86,9 +83,5 @@ public class OrdenPicking extends Orden implements Comparable<OrdenPicking>, Bus
         this.setEstado(EstadoOrden.FINALIZADA);
         this.setFechaRealizacion(LocalDateTime.now());
     }
-    @Override
-    public void cancelarOrden(){
-        this.setEstado(EstadoOrden.CANCELADA);
-        this.setFechaRealizacion(LocalDateTime.now());
-    }
+
 }

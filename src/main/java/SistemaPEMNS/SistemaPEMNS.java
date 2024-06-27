@@ -13,6 +13,9 @@ import Productos.Calzado;
 import Productos.Indumentaria;
 import Productos.Producto;
 import Orden.*;
+import enumeradores.DestinoEcommerce;
+import enumeradores.Empresa;
+import enumeradores.Prioridad;
 import estanteria.Estanteria;
 import estanteria.Posicion;
 import org.apache.poi.ss.usermodel.Cell;
@@ -29,25 +32,23 @@ import java.util.stream.Collectors;
 
 public class SistemaPEMNS {
     //GESTORES MANEJADORES DE CLASES ESPECIFICOS DE NUESTRO SISTEMA
-    private final GestorCollGen<Producto, TreeSet<Producto>,Integer, Prioridad> gestorProductos;
-    private final GestorCollGen<OrdenAlmacenamiento, PriorityQueue<OrdenAlmacenamiento>,Integer, String> gestorOrdenesAlmacenamiento;
-    private final GestorCollGen<OrdenPicking, PriorityQueue<OrdenPicking>,Integer, String> gestorOrdenesPicking;
+    private final GestorCollGen<Producto, TreeSet<Producto>, Integer, Prioridad> gestorProductos;
+    private final GestorCollGen<Orden, PriorityQueue<Orden>, Integer, String> gestorOrdenes;
     private final GestorCollGen<Estanteria, ArrayList<Estanteria>, Integer, Prioridad> gestorEstanteria;  //vamos a trabajar por busqueda desde esta collection pero estaria bueno trabajarlo desde mapaRelacionalRastreo para optimizar las busquedas
 
     //GESTORES RELACIONALES DE BÚSQUEDA DE NUESTRO SISTEMA
 
     private final GestorMapGen<Producto, Integer, Prioridad, Posicion, Integer, Double, Map<Producto, LinkedList<Posicion>>> mapaRelacionalRastreo; //es quien va a llevar la relacion entre un producto y las ubicaciones donde se encuentra almacenado
     // totalmente necesario para las operaciones de busqueda tanto para almacenamiento como para pickeo
-    private final GestorMapGen<Posicion, Integer, Double, ProductoAlmacenado, Integer, Integer, Map<Posicion, LinkedList <ProductoAlmacenado>>>mapaRelacionalAlmacenamiento;
+    private final GestorMapGen<Posicion, Integer, Double, ProductoAlmacenado, Integer, Integer, Map<Posicion, LinkedList<ProductoAlmacenado>>> mapaRelacionalAlmacenamiento;
 
 
     public SistemaPEMNS() {
-        this.gestorProductos = new GestorCollGen<>(new TreeSet<Producto>());
-        this.gestorOrdenesAlmacenamiento = new GestorCollGen<>(new PriorityQueue<OrdenAlmacenamiento>());
-        this.gestorOrdenesPicking = new GestorCollGen<>(new PriorityQueue<OrdenPicking>());
-        this.gestorEstanteria = new GestorCollGen<>(new ArrayList<Estanteria>());
-        this.mapaRelacionalRastreo=new GestorMapGen<>(new TreeMap<Producto,LinkedList<Posicion>>());
-        this.mapaRelacionalAlmacenamiento=new GestorMapGen<>(new TreeMap<Posicion,LinkedList<ProductoAlmacenado>>());
+        this.gestorProductos = new GestorCollGen<>(new TreeSet<>());
+        this.gestorOrdenes = new GestorCollGen<>(new PriorityQueue<Orden>());
+        this.gestorEstanteria = new GestorCollGen<>(new ArrayList<>());
+        this.mapaRelacionalRastreo = new GestorMapGen<>(new TreeMap<>());
+        this.mapaRelacionalAlmacenamiento = new GestorMapGen<>(new TreeMap<>());
     }
 
     public GestorCollGen<Producto, TreeSet<Producto>, Integer, Prioridad> getGestorProductos() {
@@ -59,12 +60,9 @@ public class SistemaPEMNS {
         return gestorEstanteria;
     }
 
-    public GestorCollGen<OrdenPicking, PriorityQueue<OrdenPicking>, Integer, String> getGestorOrdenesPicking() {
-        return gestorOrdenesPicking;
-    }
 
-    public GestorCollGen<OrdenAlmacenamiento, PriorityQueue<OrdenAlmacenamiento>, Integer, String> getGestorOrdenesAlmacenamiento() {
-        return gestorOrdenesAlmacenamiento;
+    public GestorCollGen<Orden, PriorityQueue<Orden>, Integer, String> getGestorOrdenes() {
+        return gestorOrdenes;
     }
 
     public GestorMapGen<Producto, Integer, Prioridad, Posicion, Integer, Double, Map<Producto, LinkedList<Posicion>>> getMapaRelacionalRastreo() {
@@ -75,22 +73,23 @@ public class SistemaPEMNS {
         return mapaRelacionalAlmacenamiento;
     }
 
-    public int generarOrdenPickingDesdePedido (Integer hashProducto, Integer cantidad, DestinoEcommerce destinoEcommerce, String idPedido) throws FaltaDeStockException {
+
+    public int generarOrdenPickingDesdePedido(Integer hashProducto, Integer cantidad, DestinoEcommerce destinoEcommerce, String idPedido) throws FaltaDeStockException {
         List<Posicion> posicionesDelProducto = this.getMapaRelacionalRastreo().devolverListaValoresDeKeyBuscada(hashProducto); // Obtengo la lista de posiciones en que se almacena un producto
         Integer cantidadAPickear = cantidad;
         int indexPosicion = 0;
 
         while (cantidadAPickear > 0 && indexPosicion < posicionesDelProducto.size()) { //mientras haya que pickear y mientras que el indice de posicion sea menor al tamaño de la lista filtrada de posiciones
-            List<ProductoAlmacenado> productosBuscados = this.getMapaRelacionalAlmacenamiento().devolverListaValoresDeKeyBuscadaFiltrada(posicionesDelProducto.get(indexPosicion).getHashPosicion(),hashProducto);
+            List<ProductoAlmacenado> productosBuscados = this.getMapaRelacionalAlmacenamiento().devolverListaValoresDeKeyBuscadaFiltrada(posicionesDelProducto.get(indexPosicion).getHashPosicion(), hashProducto);
 
 
             for (ProductoAlmacenado productoAlmacenado : productosBuscados) {
                 if (productoAlmacenado.getStockDePosicion() >= cantidadAPickear) {
-                    getGestorOrdenesPicking().agregar(new OrdenPicking(hashProducto, cantidadAPickear, destinoEcommerce, idPedido, posicionesDelProducto.get(indexPosicion).getHashPosicion()));
+                    getGestorOrdenes().agregar(new OrdenPicking(hashProducto, cantidadAPickear, destinoEcommerce, idPedido, posicionesDelProducto.get(indexPosicion).getHashPosicion(), productoAlmacenado.getIdProductoAlmacenado()));
                     cantidadAPickear = 0;
                     break;
                 } else {
-                    getGestorOrdenesPicking().agregar(new OrdenPicking(hashProducto, productoAlmacenado.getStockDePosicion(), destinoEcommerce, idPedido, posicionesDelProducto.get(indexPosicion).getHashPosicion()));
+                    getGestorOrdenes().agregar(new OrdenPicking(hashProducto, productoAlmacenado.getStockDePosicion(), destinoEcommerce, idPedido, posicionesDelProducto.get(indexPosicion).getHashPosicion(), productoAlmacenado.getIdProductoAlmacenado()));
                     cantidadAPickear -= productoAlmacenado.getStockDePosicion();
                 }
             }
@@ -100,15 +99,14 @@ public class SistemaPEMNS {
 
         if (cantidadAPickear > 0) {
             // No se pudo completar el picking de todos los productos solicitados
-            throw new FaltaDeStockException(hashProducto);
+            throw new FaltaDeStockException("No se puede generar la orden de pickeo del producto " + hashProducto + " por falta de stock");
         }
 
         return cantidad - cantidadAPickear; // Retorna la cantidad que se logró asignar para pickear
     }
 
 
-
-    public int generarOrdenAlmacenamientoDesdeRemito(Integer hashProducto, Integer cantidad, Empresa empresa, String nroRemito) throws FaltaDeEspacioException {
+    public int generarOrdenAlmacenamientoDesdeRemito(Integer hashProducto, Integer cantidad, Empresa empresa, String nroRemito )throws  FaltaDeEspacioException {
         Producto productoAAlmacenar = getGestorProductos().buscarPrimero(hashProducto); // Busco el objeto producto a almacenar en el gestor de productos para obtener los atributos del mismo
         int cantidadAAlmacenar = cantidad;
         int indexPosicion = 0;
@@ -126,12 +124,12 @@ public class SistemaPEMNS {
             double volumenRequerido = productoAAlmacenar.getVolumen() * cantidadAAlmacenar;
 
             if (volumenRequerido <= posicion.getVolumenDisponible()) {
-                getGestorOrdenesAlmacenamiento().agregar(new OrdenAlmacenamiento(hashProducto, cantidadAAlmacenar, posicion.getHashPosicion(), nroRemito, empresa));
+                getGestorOrdenes().agregar(new OrdenAlmacenamiento(hashProducto, cantidadAAlmacenar, posicion.getHashPosicion(), nroRemito, empresa));
                 cantidadAAlmacenar = 0; //El producto fue almacenado por completo
                 break;
             } else {
                 int cantidadPorPosicion = (int) Math.floor(posicion.getVolumenDisponible() / productoAAlmacenar.getVolumen());
-                getGestorOrdenesAlmacenamiento().agregar(new OrdenAlmacenamiento(hashProducto, cantidadPorPosicion,  posicion.getHashPosicion(), nroRemito, empresa));
+                getGestorOrdenes().agregar(new OrdenAlmacenamiento(hashProducto, cantidadPorPosicion,  posicion.getHashPosicion(), nroRemito, empresa));
                 cantidadAAlmacenar -= cantidadPorPosicion;
             }
 
@@ -146,19 +144,71 @@ public class SistemaPEMNS {
         return cantidad - cantidadAAlmacenar; // Retorna la cantidad que se logró asignar para almacenar
     }
 
-
-    public boolean realizarOrdenPicking (Integer hashOrdenPicking, Integer legajoRealizador){
-
-    }
-
-    public boolean cancelarOrdenPicking(OrdenPicking ordenPicking){
-        return true;
-    }
-
-    public boolean realizarOrdenAlmacenamiento(Integer hashOrdenAlmacenamiento, Integer hashPosicionAlmacenamiento, Integer legajoRealizador) {
+    public boolean realizarOrdenDePicking(Integer idOrdenPicking, Integer hashPosicionPicking, Integer legajoRealizador) {
         try {
-            // Obtengo la orden de almacenamiento
-            OrdenAlmacenamiento ordenTrabajada = this.getGestorOrdenesAlmacenamiento().buscarPrimero(hashOrdenAlmacenamiento);
+            // Busco la orden de picking
+            OrdenPicking ordenTrabajada = (OrdenPicking) this.gestorOrdenes.buscarPrimero(idOrdenPicking);
+            if (ordenTrabajada == null) {
+                throw new OrdenNoEncontradaException("Orden de picking no encontrada.");
+            }
+
+            // Obtengo la posición de picking
+            Posicion posicionPicking = this.obtenerPosicionPorHash(hashPosicionPicking);
+            if (posicionPicking == null) {
+                throw new PosicionNoEncontradaException("Posición de picking no encontrada.");
+            }
+
+            // Obtengo el producto
+            Producto productoPickeado = this.getGestorProductos().buscarPrimero(ordenTrabajada.getHashProducto());
+            if (productoPickeado == null) {
+                throw new ProductoNoEncontradoException("Producto no encontrado.");
+            }
+
+            // Verifico si hay suficiente stock en la posición en el momento de realizarla (puede ser que por concurrencia de procesos el stock fuera menor). Se desarrollara más adelante como manejar la concurrencia de procesos
+            ProductoAlmacenado productoAlmacenado = this.getMapaRelacionalAlmacenamiento().buscarPorClaveTodosValores(hashPosicionPicking).stream().filter(productoAlm -> productoAlm.buscar(ordenTrabajada.getIdProductoAlmacenado())).findFirst().orElse(null);//busco el ProductoAlmacenado que me corresponde
+            if (productoAlmacenado == null) {
+                throw new FaltaDeStockException("Stock insuficiente en la posición de picking.");
+            }
+
+            // Actualizo el stock del ProductoAlmacenado y el volumenAlmacenado del ProductoAlmacenado
+            productoAlmacenado.setStockDePosicion(productoAlmacenado.getStockDePosicion() - ordenTrabajada.getCantidadProducto());
+            if (productoAlmacenado.getStockDePosicion()<= 0) {
+                this.getMapaRelacionalAlmacenamiento().eliminarValorDeClave(posicionPicking, productoAlmacenado);//remuevo el valor de la clave si el stock es 0. Tambien esta funcion elimina la clave si no hay valores en la lista
+            }
+            else{
+                productoAlmacenado.setVolumenAlmacenado(productoAlmacenado.getStockDePosicion()*productoPickeado.getVolumen()); //si todavia hay stock >0 en el ProductoAlmacenado
+            }
+
+            //Actualizo volumen disponible en la Posición
+            posicionPicking.setVolumenDisponible(posicionPicking.getVolumenDisponible()-ordenTrabajada.getCantidadProducto()*productoPickeado.getVolumen());
+
+            // Actualizo el stock del producto
+            productoPickeado.setStock(productoPickeado.getStock()-ordenTrabajada.getCantidadProducto());
+
+
+
+            // Finalizar la orden de picking
+            ordenTrabajada.finalizarOrden(legajoRealizador);
+
+            return true;
+        } catch (OrdenNoEncontradaException | PosicionNoEncontradaException | ProductoNoEncontradoException | FaltaDeStockException exception) {
+            System.err.println("Error en la realización de la Orden de Picking: " + exception.getMessage());
+            return false;
+        }
+
+    }
+
+
+
+public boolean realizarOrdenAlmacenamiento(Integer idOrdenAlmacenamiento, Integer hashPosicionAlmacenamiento, Integer legajoRealizador) {
+        try {
+            Orden ordenTrabajada =  this.gestorOrdenes.buscarPrimero(idOrdenAlmacenamiento);
+
+            //Checkeo si la orden trabajada es una orden de almacenamiento, lo malo es que tengo que castear despues
+            if(!(ordenTrabajada instanceof  OrdenAlmacenamiento)){
+                throw new IllegalArgumentException("La orden no es una orden de almacenamiento.");
+            }
+
             if (ordenTrabajada == null) {
                 throw new OrdenNoEncontradaException("Orden de almacenamiento no encontrada.");
             }
@@ -183,7 +233,7 @@ public class SistemaPEMNS {
             posicionAlmacenamiento.setVolumenDisponible(nuevoVolumenDisponible);
 
             // Cambio el estado de la orden a finalizada
-            ordenTrabajada.finalizarOrden(legajoRealizador, hashPosicionAlmacenamiento);
+            ((OrdenAlmacenamiento)ordenTrabajada).finalizarOrden(legajoRealizador, hashPosicionAlmacenamiento);
 
             // Instancio un nuevo ProductoAlmacenado
             ProductoAlmacenado nuevoProductoAlmacenado = new ProductoAlmacenado(productoAlmacenable, posicionAlmacenamiento, ordenTrabajada.getCantidadProducto());
@@ -202,9 +252,19 @@ public class SistemaPEMNS {
         }
     }
 
-    public boolean cancelarOrdenAlmacenamiento(OrdenAlmacenamiento ordenAlmacenamiento, Integer legajoRealizador) {
 
-        return true;
+    public boolean cancelarOrden(Integer idOrden) {
+        try {
+            Orden ordenTrabajada = gestorOrdenes.buscarPrimero(idOrden);
+            if (ordenTrabajada == null) {
+                throw new OrdenNoEncontradaException("Orden no encontrada.");
+            }
+            ordenTrabajada.cancelarOrden();
+            return true;
+        } catch (OrdenNoEncontradaException exception) {
+            System.out.println("Error en la cancelación de la orden: " + exception.getMessage());
+            return false;
+        }
     }
 
 

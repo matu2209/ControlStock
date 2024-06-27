@@ -26,6 +26,23 @@ public class GestorMapGen<K extends Buscable<B> & Filtrable<F> & Comparable<K>, 
         return mapa.remove(clave);
     }
 
+    public boolean eliminarValorDeClave(K clave, V valor) {
+        if (mapa.containsKey(clave)) {          // Verifico si el mapa contiene la clave
+
+            LinkedList<V> listaValores = mapa.get(clave);
+
+           listaValores.remove(valor);  // Elimino el valor de la lista
+
+            if (listaValores.isEmpty()) {   // Si la lista queda vacía, elimino la clave del mapa
+                this.eliminar(clave);
+            }
+            return true;
+        }
+
+        // Retorno false si la clave no existe en el mapa
+        return false;
+    }
+
     public int tamanio() {
         return mapa.size();
     }

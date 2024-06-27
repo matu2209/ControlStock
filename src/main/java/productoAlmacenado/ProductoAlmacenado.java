@@ -92,7 +92,7 @@ public class ProductoAlmacenado implements Buscable<Integer>, Filtrable<Integer>
 
     @Override
     public boolean buscar(Integer parametroABuscar) {
-        return this.getProductoAlmacenado().getHashProducto().equals(parametroABuscar);
+        return this.getIdProductoAlmacenado().equals(parametroABuscar);
     }
 
     @Override

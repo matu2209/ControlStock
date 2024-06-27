@@ -1,16 +1,12 @@
 package Orden;
 
-import Interfaces.Buscable;
-import Interfaces.Filtrable;
 import enumeradores.Empresa;
 import enumeradores.EstadoOrden;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class OrdenAlmacenamiento extends Orden implements Comparable<OrdenAlmacenamiento>, Buscable<Integer>, Filtrable<String> { //se puede filtrar por nroRemito
-    private static Integer autoID = 1;
-    private final Integer idOrden;
+public class OrdenAlmacenamiento extends Orden { //se puede filtrar por nroRemito ;
     private String nroRemito;
     private Empresa empresa;
     private Integer hashPosicionAlmacenamiento;
@@ -18,16 +14,12 @@ public class OrdenAlmacenamiento extends Orden implements Comparable<OrdenAlmace
 
     public OrdenAlmacenamiento(Integer hashProducto, Integer cantidadProducto,Integer hashPosicionCreacion, String nroRemito, Empresa empresa) {
         super(hashProducto, cantidadProducto, hashPosicionCreacion);
-        this.idOrden = autoID++;
         this.nroRemito = nroRemito;
         this.empresa = empresa;
         this.hashPosicionAlmacenamiento = null;
     }
 
 
-    public Integer getIdOrden() {
-        return idOrden;
-    }
 
     public String getNroRemito() {
         return nroRemito;
@@ -59,18 +51,17 @@ public class OrdenAlmacenamiento extends Orden implements Comparable<OrdenAlmace
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         OrdenAlmacenamiento that = (OrdenAlmacenamiento) o;
-        return Objects.equals(getIdOrden(), that.getIdOrden()) && Objects.equals(getNroRemito(), that.getNroRemito()) && getEmpresa() == that.getEmpresa();
+        return Objects.equals(getNroRemito(), that.getNroRemito()) && getEmpresa() == that.getEmpresa() && Objects.equals(getHashPosicionAlmacenamiento(), that.getHashPosicionAlmacenamiento());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), getIdOrden(), getNroRemito(), getEmpresa());
+        return Objects.hash(super.hashCode(), getNroRemito(), getEmpresa(), getHashPosicionAlmacenamiento());
     }
 
     @Override
     public String toString() {
         return "OrdenAlmacenamiento{" +
-                "idOrden=" + idOrden +
                 ", nroRemito='" + nroRemito + '\'' +
                 ", empresa=" + empresa +
                 "hashPosicionAlmacenamiento=" + hashPosicionAlmacenamiento +
@@ -79,7 +70,7 @@ public class OrdenAlmacenamiento extends Orden implements Comparable<OrdenAlmace
 
     @Override
     public boolean buscar(Integer parametroABuscar) {
-        return this.getIdOrden().equals(parametroABuscar);
+        return super.getIdOrden().equals(parametroABuscar);
     }
 
     @Override
@@ -87,10 +78,7 @@ public class OrdenAlmacenamiento extends Orden implements Comparable<OrdenAlmace
         return this.getNroRemito().toUpperCase().contains(parametroFiltrado.toUpperCase());
     }
 
-    @Override
-    public int compareTo(OrdenAlmacenamiento orden) {
-        return this.getIdOrden().compareTo(orden.getIdOrden());
-    }
+
 
     @Override
     public void finalizarOrden(Integer legajoRealizador){
@@ -106,9 +94,4 @@ public class OrdenAlmacenamiento extends Orden implements Comparable<OrdenAlmace
         this.setFechaRealizacion(LocalDateTime.now());
     }
 
-    @Override
-    public void cancelarOrden(){
-        this.setEstado(EstadoOrden.CANCELADA);
-        this.setFechaRealizacion(LocalDateTime.now());
-    }
 }

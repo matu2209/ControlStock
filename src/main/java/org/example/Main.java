@@ -3,18 +3,12 @@ package org.example;
 import Productos.Accesorios;
 import Productos.Calzado;
 import Productos.Indumentaria;
-import Productos.Producto;
 import SistemaPEMNS.SistemaPEMNS;
 import enumeradores.Disciplina;
 import enumeradores.Empresa;
 import enumeradores.Prioridad;
 import enumeradores.Segmento;
 import estanteria.Estanteria;
-import estanteria.EstanteriaCalzado;
-import estanteria.EstanteriaIndAcc;
-import estanteria.Posicion;
-
-import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
@@ -89,9 +83,9 @@ public class Main {
         //sistema.getGestorProductos().getElementos().forEach(System.out::println);
 
         //sistema.guardarProductosExel();
-        Estanteria e1 = new EstanteriaCalzado(Prioridad.ALTA,Empresa.LIBERTAD);
+        Estanteria e1 = new Estanteria(Prioridad.ALTA,Empresa.LIBERTAD);
         e1.crearPosicionesEstanteria();
-        Estanteria e2 = new EstanteriaIndAcc(Prioridad.MEDIA,Empresa.ALMACEN_ADIDAS);
+        Estanteria e2 = new Estanteria(Prioridad.MEDIA,Empresa.ALMACEN_ADIDAS);
         e2.crearPosicionesEstanteria();
         //sistema.leerProductosExel();
         sistema.getGestorEstanteria().agregar(e1);
